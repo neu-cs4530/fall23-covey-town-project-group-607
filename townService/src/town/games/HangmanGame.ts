@@ -25,6 +25,12 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       status: 'WAITING_TO_START',
     });
 
+    // generate a random word
+    const fs = require('fs');
+    const words = fs.readFileSync('/words.txt', 'utf-8');
+    const wordsList = words.split('\n');
+    const randomNumber = Math.floor(Math.random() * wordsList.length);
+    this.state.word = wordsList[randomNumber];
     this.currentGuess = [];
     // initialize currentGuesses
     for (const i of this.state.word) {
