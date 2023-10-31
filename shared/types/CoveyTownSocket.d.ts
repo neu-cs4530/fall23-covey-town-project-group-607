@@ -17,6 +17,24 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
+export interface HangManMove {
+  guessingLetter?: 'A' | 'B' | 'C' | 'D' | 'E' |
+  'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'| 'O' |
+  'P' | 'Q' | 'R' | 'S' | 'T' | 'U'| 'V' | 'W' | 'X' | 'Y' | 'Z',
+  guessingWord?: string,
+  player?: PlayerID
+}
+
+export interface HangManGameState extends WinnableGameState {
+  moves: ReadonlyArray<HangManMove>;
+  currentWord: string;
+  mistakes: number;
+  p1?: PlayerID;
+  p2?: PlayerID;
+  p3?: PlayerID;
+  p4?: PlayerID;
+}
+
 export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
 export interface Interactable {
   type: InteractableType;
