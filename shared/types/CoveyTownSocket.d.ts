@@ -18,21 +18,21 @@ export type TownJoinResponse = {
 }
 
 export interface HangManMove {
-  guessingLetter?: 'A' | 'B' | 'C' | 'D' | 'E' |
+  letterGuess?: 'A' | 'B' | 'C' | 'D' | 'E' |
   'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'| 'O' |
   'P' | 'Q' | 'R' | 'S' | 'T' | 'U'| 'V' | 'W' | 'X' | 'Y' | 'Z',
-  guessingWord?: string,
-  player?: PlayerID
+  wordGuess?: string,
+  playerID?: PlayerID
 }
 
 export interface HangManGameState extends WinnableGameState {
-  moves: ReadonlyArray<HangManMove>;
-  currentWord: string;
-  mistakes: number;
-  p1?: PlayerID;
-  p2?: PlayerID;
-  p3?: PlayerID;
-  p4?: PlayerID;
+  guesses: ReadonlyArray<HangManMove>;
+  mistakes: ReadonlyArray<HangManMove>;
+  word: string;
+  player1?: PlayerID;
+  player2?: PlayerID;
+  player3?: PlayerID;
+  player4?: PlayerID;
 }
 
 export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';

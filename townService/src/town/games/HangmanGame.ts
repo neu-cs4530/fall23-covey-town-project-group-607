@@ -1,4 +1,3 @@
-import { move } from 'ramda';
 import InvalidParametersError, {
     BOARD_POSITION_NOT_EMPTY_MESSAGE,
     GAME_FULL_MESSAGE,
@@ -9,27 +8,34 @@ import InvalidParametersError, {
     INVALID_MOVE_MESSAGE
   } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangmanGameState, HangmanMove } from '../../types/CoveyTownSocket';
+import { GameMove, HangManGameState, HangManMove } from '../../types/CoveyTownSocket';
 import Game from './Game';
 
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
-export default class HangmanGame extends Game<HangmanGameState, HangmanMove>{
+export default class HangmanGame extends Game<HangManGameState, HangManMove>{
     public currentGuess: string[];
     public constructor() {
         super({
             guesses: [],
             mistakes: [],
-            word: 'apple',
+            word: '',
             status:'WAITING_TO_START',
         });
+
+        // generate a random word
+        const fs = require('fs');
+        const words = fs.readFileSync('/words.txt', 'utf-8');
+        const wordsList = words.split('\n');
+        const randomNumber = Math.floor(Math.random() * wordsList.length);
+        this.state.word = wordsList[randomNumber]
+        
         this.currentGuess = [];
         // initialize currentGuesses
         for(const i of this.state.word) {
             this.currentGuess.push('')
         }
-
     }
 
     /**
@@ -49,7 +55,7 @@ export default class HangmanGame extends Game<HangmanGameState, HangmanMove>{
      * The players win if their guessedWord is the same as word or guessLetter is the last and correct letter guess (currentGuess matches word)
      * @param move 
      */
-    public applyMove(move: GameMove<HangmanMove>): void {
+    public applyMove(move: GameMove<HangManMove>): void {
         // check if letterGuess and wordGuess is not given
         if(move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
             throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
@@ -76,7 +82,7 @@ export default class HangmanGame extends Game<HangmanGameState, HangmanMove>{
      * Then it alternates the turn to the next player
      * @param player_move is the player's move
      */
-    private _validMove(player_move: GameMove<HangmanMove>): void {
+    private _validMove(player_move: GameMove<HangManMove>): void {
         // add move to the guesses list and update game status
         const updatedGuesses = [...this.state.guesses, player_move]
         let updatedMistakes = [...this.state.mistakes, player_move]
