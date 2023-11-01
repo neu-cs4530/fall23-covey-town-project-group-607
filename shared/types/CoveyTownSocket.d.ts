@@ -103,7 +103,7 @@ export interface GameState {
  * Type for the state of a game that can be won
  */
 export interface WinnableGameState extends GameState {
-  winner?: PlayerID | [PlayerID];
+  winner?: PlayerID | PlayerID[];
 }
 /**
  * Base type for a move in a game. Implementers should also extend MoveType

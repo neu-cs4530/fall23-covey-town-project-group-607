@@ -122,13 +122,18 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     if (player_move.move.wordGuess) {
       const { wordGuess } = player_move.move;
       // check if the word matches with the guessed word
+      // eslint-disable-next-line prefer-const
+      let winnersList = [];
+      for (const play of this._players) {
+        winnersList.push(play.id);
+      }
       if (this.state.word === wordGuess) {
         // add the word to guesses
         this.state = {
           ...this.state,
           guesses: updatedGuesses,
           status: 'OVER',
-          winner: player_move.playerID,
+          winner: winnersList,
         };
       } // check if the word does not match guessed word
       else {
