@@ -1,5 +1,5 @@
+import { readFileSync } from 'fs';
 import InvalidParametersError, {
-  BOARD_POSITION_NOT_EMPTY_MESSAGE,
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
   MOVE_NOT_YOUR_TURN_MESSAGE,
@@ -21,19 +21,19 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     super({
       guesses: [],
       mistakes: [],
-      word: 'apple',
+      word: '',
       status: 'WAITING_TO_START',
     });
 
     // generate a random word
-    const fs = require('fs');
-    const words = fs.readFileSync('/words.txt', 'utf-8');
+    const words = readFileSync('/words.txt', 'utf-8');
     const wordsList = words.split('\n');
     const randomNumber = Math.floor(Math.random() * wordsList.length);
     this.state.word = wordsList[randomNumber];
     this.currentGuess = [];
+
     // initialize currentGuesses
-    for (const i of this.state.word) {
+    for (let i = 0; i < this.state.word.length; i++) {
       this.currentGuess.push('');
     }
   }
