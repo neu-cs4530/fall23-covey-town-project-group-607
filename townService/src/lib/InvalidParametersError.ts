@@ -1,8 +1,10 @@
 export const INVALID_MOVE_MESSAGE = 'Invalid move';
+export const INVALID_GUESS = 'Invalid guess';
 export const INVALID_COMMAND_MESSAGE = 'Invalid command';
 
 export const GAME_FULL_MESSAGE = 'Game is full';
 export const GAME_NOT_IN_PROGRESS_MESSAGE = 'Game is not in progress';
+export const GAME_IN_PROGRESS_MESSAGE = 'Game in progress';
 export const GAME_OVER_MESSAGE = 'Game is over';
 export const GAME_ID_MISSMATCH_MESSAGE = 'Game ID mismatch';
 

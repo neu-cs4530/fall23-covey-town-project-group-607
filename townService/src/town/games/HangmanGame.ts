@@ -6,27 +6,30 @@ import InvalidParametersError, {
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
   INVALID_MOVE_MESSAGE,
+  GAME_IN_PROGRESS_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangManGameState, HangManMove } from '../../types/CoveyTownSocket';
+import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
 import Game from './Game';
-
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
 export default class HangmanGame extends Game<HangManGameState, HangManMove> {
   public currentGuess: string[];
 
+  public activePlayers: PlayerID[];
+
   public constructor() {
     super({
       guesses: [],
       mistakes: [],
-      word: '',
+      word: 'apple',
       status: 'WAITING_TO_START',
     });
+    this.activePlayers = [];
 
     // generate a random word
-    const words = readFileSync('/words.txt', 'utf-8');
+    const words = readFileSync('./src/town/games/words.txt', { encoding: 'utf8', flag: 'r' });
     const wordsList = words.split('\n');
     const randomNumber = Math.floor(Math.random() * wordsList.length);
     this.state.word = wordsList[randomNumber];
@@ -64,13 +67,14 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
-    // if not the player's turn
-    if (
-      (this.state.guesses.length % 4 === 0 && move.playerID !== this.state.player1) ||
-      (this.state.guesses.length % 1 === 0 && move.playerID !== this.state.player2) ||
-      (this.state.guesses.length % 2 === 0 && move.playerID !== this.state.player3) ||
-      (this.state.guesses.length % 3 === 0 && move.playerID !== this.state.player4)
-    ) {
+    // Need to check if the letter is avaliable to use
+    const totalMoves = [...this.state.guesses].length;
+    const totalActivePlayers = this.activePlayers.length;
+    const currentTurnIndex = totalMoves % totalActivePlayers;
+    const currentTurn = this.activePlayers[currentTurnIndex];
+
+    // Checks if it's their turn
+    if (move.playerID !== currentTurn) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
 
@@ -148,6 +152,13 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
   }
 
   /**
+   * Starts the game
+   */
+  public _start(): void {
+    this.state.status = 'IN_PROGRESS';
+  }
+
+  /**
    * Adds a player to the game.
    * Updates the game's state to reflect the new player
    * If the game is now full (has 4 players), updates the game's state to set the status IN_PROGRESS
@@ -157,8 +168,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    *  or the game is full (GAME_FULL_MESSAGE) or if the game is not WAITING_TO_START (AME_NOT_IN_PROGRESS_MESSAGE)
    */
   public _join(player: Player): void {
-    if (this.state.status !== 'WAITING_TO_START') {
-      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    if (this.state.status === 'IN_PROGRESS') {
+      throw new InvalidParametersError(GAME_IN_PROGRESS_MESSAGE);
     }
 
     for (const playerInGame of this._players) {
@@ -173,13 +184,16 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     if (this._players.length === 0 && !this.state.player1) {
       this.state.player1 = player.id;
+      this.activePlayers.push(this.state.player1);
     } else if (this._players.length === 1 && !this.state.player2) {
       this.state.player2 = player.id;
+      this.activePlayers.push(this.state.player2);
     } else if (this._players.length === 2 && !this.state.player3) {
       this.state.player3 = player.id;
+      this.activePlayers.push(this.state.player3);
     } else if (this._players.length === 3 && !this.state.player4) {
       this.state.player4 = player.id;
-      this.state.status = 'IN_PROGRESS';
+      this.activePlayers.push(this.state.player4);
     } else {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
@@ -216,5 +230,39 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     } else if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
+
+    // Remove players
+    if (this.state.player1 === player.id) {
+      this.activePlayers.filter(p => p !== player.id);
+      this._removePlayersGuesses(player);
+    } else if (this.state.player2 === player.id) {
+      this.activePlayers.filter(p => p !== player.id);
+      this._removePlayersGuesses(player);
+    } else if (this.state.player3 === player.id) {
+      this.activePlayers.filter(p => p !== player.id);
+      this._removePlayersGuesses(player);
+    } else if (this.state.player4 === player.id) {
+      this.activePlayers.filter(p => p !== player.id);
+      this._removePlayersGuesses(player);
+    }
+
+    // Reset the states if the person leaves the game that's in progress
+    if (this._players.length === 1) {
+      this.state = {
+        guesses: [],
+        mistakes: [],
+        word: '',
+        status: 'WAITING_TO_START',
+      };
+      this.currentGuess = [];
+      for (let i = 0; i < this.state.word.length; i++) {
+        this.currentGuess.push('');
+      }
+    }
+  }
+
+  private _removePlayersGuesses(player: Player): void {
+    const filteredGuesses = this.state.guesses.filter(guess => guess.playerID !== player.id);
+    this.state.guesses = filteredGuesses;
   }
 }
