@@ -17,18 +17,19 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export interface HangManMove {
-  letterGuess?: 'A' | 'B' | 'C' | 'D' | 'E' |
-  'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'| 'O' |
-  'P' | 'Q' | 'R' | 'S' | 'T' | 'U'| 'V' | 'W' | 'X' | 'Y' | 'Z',
+export interface HangmanMove {
+  letterGuess?: 'a' | 'b' | 'c' | 'd' | 'e' |
+  'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'| 'n' | 'o' |
+  'p' | 'q' | 'r' | 's' | 't' | 'u'| 'v' | 'w' | 'x' | 'y' | 'z',
   wordGuess?: string,
   playerID?: PlayerID
 }
 
-export interface HangManGameState extends WinnableGameState {
-  guesses: ReadonlyArray<HangManMove>;
-  mistakes: ReadonlyArray<HangManMove>;
+export interface HangmanGameState extends WinnableGameState {
+  guesses: ReadonlyArray<HangmanMove>;
+  mistakes: ReadonlyArray<HangmanMove>;
   word: string;
+  currentGuess: string[];
   player1?: PlayerID;
   player2?: PlayerID;
   player3?: PlayerID;

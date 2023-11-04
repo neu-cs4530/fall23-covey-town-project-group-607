@@ -6,39 +6,38 @@ import InvalidParametersError, {
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
   INVALID_MOVE_MESSAGE,
-  GAME_IN_PROGRESS_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
+import { GameMove, HangmanGameState, HangmanMove, PlayerID } from '../../types/CoveyTownSocket';
 import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
-export default class HangmanGame extends Game<HangManGameState, HangManMove> {
-  public currentGuess: string[];
-
+export default class HangmanGame extends Game<HangmanGameState, HangmanMove> {
   public activePlayers: PlayerID[];
 
   public constructor() {
     super({
       guesses: [],
       mistakes: [],
-      word: 'apple',
+      word: '',
       status: 'WAITING_TO_START',
+      currentGuess: [],
     });
     this.activePlayers = [];
-
-    // generate a random word
-    const words = readFileSync('./src/town/games/words.txt', { encoding: 'utf8', flag: 'r' });
-    const wordsList = words.split('\n');
-    const randomNumber = Math.floor(Math.random() * wordsList.length);
-    this.state.word = wordsList[randomNumber];
-    this.currentGuess = [];
+    this.state.word = this._generateRandomWord();
 
     // initialize currentGuesses
     for (let i = 0; i < this.state.word.length; i++) {
-      this.currentGuess.push('');
+      this.state.currentGuess.push('');
     }
+  }
+
+  private _generateRandomWord(): string {
+    const words = readFileSync('./src/town/games/words.txt', { encoding: 'utf8', flag: 'r' });
+    const wordsList = words.split('\n');
+    const randomNumber = Math.floor(Math.random() * wordsList.length);
+    return wordsList[randomNumber];
   }
 
   /**
@@ -58,7 +57,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    * The players win if their guessedWord is the same as word or guessLetter is the last and correct letter guess (currentGuess matches word)
    * @param move
    */
-  public applyMove(move: GameMove<HangManMove>): void {
+  public applyMove(move: GameMove<HangmanMove>): void {
     // check if letterGuess and wordGuess is not given
     if (move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
@@ -67,8 +66,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
-    // Need to check if the letter is avaliable to use
-    const totalMoves = [...this.state.guesses].length;
+    const copyMoves = [...this.state.guesses];
+    const totalMoves = copyMoves.length;
     const totalActivePlayers = this.activePlayers.length;
     const currentTurnIndex = totalMoves % totalActivePlayers;
     const currentTurn = this.activePlayers[currentTurnIndex];
@@ -77,6 +76,21 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     if (move.playerID !== currentTurn) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
+
+    // Check if the move is invalid
+    // Find if any of the moves have the letter
+    // const findMove = copyMoves.find(letter => letter.letterGuess === move.move.letterGuess);
+    // // Find if any of the moves have that guess
+    // const findGuessWord = copyMoves.find(guessWord => guessWord.wordGuess === move.move.wordGuess);
+    // console.log(`Find Move:${findMove}`);
+    // console.log(`Find GuessWord:${findMove}`);
+    // console.log(copyMoves); // Check the contents of copyMoves
+    // console.log(copyMoves.find(letter => letter.letterGuess === 'a')); // Check the result of the find method
+    // // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
+    // // means the move has not been attempted
+    // if (findMove !== undefined && findGuessWord !== undefined) {
+    //   throw new InvalidParametersError(INVALID_GUESS);
+    // }
 
     // apply move after checking if the move is invalid
     this._validMove(move);
@@ -87,7 +101,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    * Then it alternates the turn to the next player
    * @param player_move is the player's move
    */
-  private _validMove(player_move: GameMove<HangManMove>): void {
+  private _validMove(player_move: GameMove<HangmanMove>): void {
     // add move to the guesses list and update game status
     const updatedGuesses = [...this.state.guesses, player_move];
     const updatedMistakes = [...this.state.mistakes, player_move];
@@ -99,7 +113,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       if (this.state.word.includes(letterGuess)) {
         // add correct letter guess to currentGuess at the correct index
         const index = this.state.word.indexOf(letterGuess);
-        this.currentGuess[index] = letterGuess;
+        this.state.currentGuess[index] = letterGuess;
         this.state = {
           ...this.state,
           guesses: updatedGuesses,
@@ -152,13 +166,6 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
   }
 
   /**
-   * Starts the game
-   */
-  public _start(): void {
-    this.state.status = 'IN_PROGRESS';
-  }
-
-  /**
    * Adds a player to the game.
    * Updates the game's state to reflect the new player
    * If the game is now full (has 4 players), updates the game's state to set the status IN_PROGRESS
@@ -168,18 +175,12 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    *  or the game is full (GAME_FULL_MESSAGE) or if the game is not WAITING_TO_START (AME_NOT_IN_PROGRESS_MESSAGE)
    */
   public _join(player: Player): void {
-    if (this.state.status === 'IN_PROGRESS') {
-      throw new InvalidParametersError(GAME_IN_PROGRESS_MESSAGE);
+    if (this._players.includes(player)) {
+      throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
 
-    for (const playerInGame of this._players) {
-      // If there is no one in the game
-      if (this._players.length === 0) {
-        break;
-      } // if player is in the list of _players throw error
-      else if (JSON.stringify(playerInGame) === JSON.stringify(player)) {
-        throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
-      }
+    if (this._players.length === 4) {
+      throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
 
     if (this._players.length === 0 && !this.state.player1) {
@@ -194,8 +195,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     } else if (this._players.length === 3 && !this.state.player4) {
       this.state.player4 = player.id;
       this.activePlayers.push(this.state.player4);
-    } else {
-      throw new InvalidParametersError(GAME_FULL_MESSAGE);
+      this.state.status = 'IN_PROGRESS';
     }
   }
 
@@ -223,26 +223,26 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       }
     }
 
-    if (this._players.includes(player) && this.state.status === 'IN_PROGRESS') {
-      this.state.status = 'OVER';
-    } else if (!this._players.includes(player)) {
+    if (!this._players.includes(player)) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
-    } else if (this.state.status !== 'IN_PROGRESS') {
-      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
     // Remove players
     if (this.state.player1 === player.id) {
-      this.activePlayers.filter(p => p !== player.id);
+      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
+      this.state.player1 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player2 === player.id) {
-      this.activePlayers.filter(p => p !== player.id);
+      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
+      this.state.player2 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player3 === player.id) {
-      this.activePlayers.filter(p => p !== player.id);
+      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
+      this.state.player3 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player4 === player.id) {
-      this.activePlayers.filter(p => p !== player.id);
+      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
+      this.state.player4 = undefined;
       this._removePlayersGuesses(player);
     }
 
@@ -251,16 +251,17 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       this.state = {
         guesses: [],
         mistakes: [],
-        word: '',
+        word: this._generateRandomWord(),
         status: 'WAITING_TO_START',
+        currentGuess: [],
       };
-      this.currentGuess = [];
-      for (let i = 0; i < this.state.word.length; i++) {
-        this.currentGuess.push('');
-      }
     }
   }
 
+  /**
+   * Removing all of the player's guesses
+   * @param player the player to remove their guesses
+   */
   private _removePlayersGuesses(player: Player): void {
     const filteredGuesses = this.state.guesses.filter(guess => guess.playerID !== player.id);
     this.state.guesses = filteredGuesses;
