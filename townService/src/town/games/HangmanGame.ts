@@ -8,14 +8,12 @@ import InvalidParametersError, {
   INVALID_MOVE_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
+import { GameMove, HangmanGameState, HangmanMove, PlayerID } from '../../types/CoveyTownSocket';
 import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
-export default class HangManGame extends Game<HangManGameState, HangManMove> {
-  public currentGuess: string[];
-
+export default class HangmanGame extends Game<HangmanGameState, HangmanMove> {
   public activePlayers: PlayerID[];
 
   public constructor() {
@@ -24,14 +22,14 @@ export default class HangManGame extends Game<HangManGameState, HangManMove> {
       mistakes: [],
       word: '',
       status: 'WAITING_TO_START',
+      currentGuess: [],
     });
     this.activePlayers = [];
     this.state.word = this._generateRandomWord();
-    this.currentGuess = [];
 
     // initialize currentGuesses
     for (let i = 0; i < this.state.word.length; i++) {
-      this.currentGuess.push('');
+      this.state.currentGuess.push('');
     }
   }
 
@@ -59,7 +57,7 @@ export default class HangManGame extends Game<HangManGameState, HangManMove> {
    * The players win if their guessedWord is the same as word or guessLetter is the last and correct letter guess (currentGuess matches word)
    * @param move
    */
-  public applyMove(move: GameMove<HangManMove>): void {
+  public applyMove(move: GameMove<HangmanMove>): void {
     // check if letterGuess and wordGuess is not given
     if (move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
@@ -103,7 +101,7 @@ export default class HangManGame extends Game<HangManGameState, HangManMove> {
    * Then it alternates the turn to the next player
    * @param player_move is the player's move
    */
-  private _validMove(player_move: GameMove<HangManMove>): void {
+  private _validMove(player_move: GameMove<HangmanMove>): void {
     // add move to the guesses list and update game status
     const updatedGuesses = [...this.state.guesses, player_move];
     const updatedMistakes = [...this.state.mistakes, player_move];
@@ -115,7 +113,7 @@ export default class HangManGame extends Game<HangManGameState, HangManMove> {
       if (this.state.word.includes(letterGuess)) {
         // add correct letter guess to currentGuess at the correct index
         const index = this.state.word.indexOf(letterGuess);
-        this.currentGuess[index] = letterGuess;
+        this.state.currentGuess[index] = letterGuess;
         this.state = {
           ...this.state,
           guesses: updatedGuesses,
@@ -255,11 +253,8 @@ export default class HangManGame extends Game<HangManGameState, HangManMove> {
         mistakes: [],
         word: this._generateRandomWord(),
         status: 'WAITING_TO_START',
+        currentGuess: [],
       };
-      this.currentGuess = [];
-      for (let i = 0; i < this.state.word.length; i++) {
-        this.currentGuess.push('');
-      }
     }
   }
 

@@ -7,13 +7,13 @@ import {
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
 import { createPlayerForTesting } from '../../TestUtils';
-import HangManGame from './HangManGame';
+import HangmanGame from './HangmanGame';
 
-describe('HangManGame', () => {
-  let game: HangManGame;
+describe('HangmanGame', () => {
+  let game: HangmanGame;
 
   beforeEach(() => {
-    game = new HangManGame();
+    game = new HangmanGame();
   });
 
   describe('_join', () => {

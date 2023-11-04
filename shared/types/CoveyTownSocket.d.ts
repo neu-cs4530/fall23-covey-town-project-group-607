@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export interface HangManMove {
+export interface HangmanMove {
   letterGuess?: 'a' | 'b' | 'c' | 'd' | 'e' |
   'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'| 'n' | 'o' |
   'p' | 'q' | 'r' | 's' | 't' | 'u'| 'v' | 'w' | 'x' | 'y' | 'z',
@@ -25,10 +25,11 @@ export interface HangManMove {
   playerID?: PlayerID
 }
 
-export interface HangManGameState extends WinnableGameState {
-  guesses: ReadonlyArray<HangManMove>;
-  mistakes: ReadonlyArray<HangManMove>;
+export interface HangmanGameState extends WinnableGameState {
+  guesses: ReadonlyArray<HangmanMove>;
+  mistakes: ReadonlyArray<HangmanMove>;
   word: string;
+  currentGuess: string[];
   player1?: PlayerID;
   player2?: PlayerID;
   player3?: PlayerID;
