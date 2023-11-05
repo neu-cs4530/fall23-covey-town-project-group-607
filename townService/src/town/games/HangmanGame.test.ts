@@ -1,6 +1,7 @@
 import {
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
+  INVALID_GUESS,
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
@@ -138,26 +139,47 @@ describe('HangmanGame', () => {
           ).toThrowError(MOVE_NOT_YOUR_TURN_MESSAGE);
         });
 
-        // it('should throw error if they make an invalid guess', () => {
-        //   game.applyMove({
-        //     gameID: game.id,
-        //     playerID: player1.id,
-        //     move: {
-        //       letterGuess: 'a',
-        //       playerID: player1.id,
-        //     },
-        //   });
-        //   expect(() =>
-        //     game.applyMove({
-        //       gameID: game.id,
-        //       playerID: player2.id,
-        //       move: {
-        //         letterGuess: 'a',
-        //         playerID: player2.id,
-        //       },
-        //     }),
-        //   ).toThrowError(INVALID_GUESS);
-        // });
+        it('should throw error if they make an invalid guess', () => {
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              letterGuess: 'a',
+              playerID: player1.id,
+            },
+          });
+          expect(() =>
+            game.applyMove({
+              gameID: game.id,
+              playerID: player2.id,
+              move: {
+                letterGuess: 'a',
+                playerID: player2.id,
+              },
+            }),
+          ).toThrowError(INVALID_GUESS);
+        });
+
+        it('should throw error if they make an invalid guess by giving an already guessed word', () => {
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              wordGuess: 'apple',
+              playerID: player1.id,
+            },
+          });
+          expect(() =>
+            game.applyMove({
+              gameID: game.id,
+              playerID: player2.id,
+              move: {
+                wordGuess: 'apple',
+                playerID: player2.id,
+              },
+            }),
+          ).toThrowError(INVALID_GUESS);
+        });
         it('checks if it all goes to the correct turn', () => {
           expect(game.state.guesses).toEqual([]);
           game.applyMove({
