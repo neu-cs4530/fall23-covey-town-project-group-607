@@ -4,7 +4,6 @@ import { createPlayerForTesting } from '../../TestUtils';
 import {
   GAME_ID_MISSMATCH_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
-  INVALID_COMMAND_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
 import {
@@ -214,136 +213,136 @@ describe('HangManGameArea', () => {
           });
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
         });
-    //     describe('when the game is over, it records a new row in the history and calls _emitAreaChanged', () => {
-    //       test('when all players win', () => {
-    //         const move: HangManMove = { letterGuess: 'a', playerID: player1.id };
-    //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
-    //           game.endGame(player1.id);
-    //         });
-    //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
-    //         expect(game.state.status).toEqual('OVER');
-    //         expect(gameArea.history.length).toEqual(1);
-    //         expect(gameArea.history[0]).toEqual({
-    //           gameID: game.id,
-    //           scores: {
-    //             [player1.userName]: 1,
-    //             'Player 2 (Undefined)': 0,
-    //             'Player 3 (Undefined)': 0,
-    //             'Player 4 (Undefined)': 0,
-    //           },
-    //         });
-    //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-    //       });
-    //       test('when O wins', () => {
-    //         const move: TicTacToeMove = { col: 0, row: 0, gamePiece: 'O' };
-    //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
-    //           game.endGame(player2.id);
-    //         });
-    //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player2);
-    //         expect(game.state.status).toEqual('OVER');
-    //         expect(gameArea.history.length).toEqual(1);
-    //         expect(gameArea.history[0]).toEqual({
-    //           gameID: game.id,
-    //           scores: {
-    //             [player1.userName]: 0,
-    //             [player2.userName]: 1,
-    //           },
-    //         });
-    //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-    //       });
-    //       test('when there is a tie', () => {
-    //         const move: TicTacToeMove = { col: 0, row: 0, gamePiece: 'X' };
-    //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
-    //           game.endGame();
-    //         });
-    //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
-    //         expect(game.state.status).toEqual('OVER');
-    //         expect(gameArea.history.length).toEqual(1);
-    //         expect(gameArea.history[0]).toEqual({
-    //           gameID: game.id,
-    //           scores: {
-    //             [player1.userName]: 0,
-    //             [player2.userName]: 0,
-    //           },
-    //         });
-    //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-    //       });
-    //     });
-    //   });
-    // });
-    // describe('[T3.3] when given a LeaveGame command', () => {
-    //   describe('when there is no game in progress', () => {
-    //     it('should throw an error', () => {
-    //       expect(() =>
-    //         gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player1),
-    //       ).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
-    //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
-    //     });
-    //   });
-    //   describe('when there is a game in progress', () => {
-    //     it('should throw an error when the game ID does not match', () => {
-    //       gameArea.handleCommand({ type: 'JoinGame' }, player1);
-    //       interactableUpdateSpy.mockClear();
-    //       expect(() =>
-    //         gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player1),
-    //       ).toThrowError(GAME_ID_MISSMATCH_MESSAGE);
-    //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
-    //     });
-    //     it('should dispatch the leave command to the game and call _emitAreaChanged', () => {
-    //       const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
-    //       if (!game) {
-    //         throw new Error('Game was not created by the first call to join');
-    //       }
-    //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-    //       const leaveSpy = jest.spyOn(game, 'leave');
-    //       gameArea.handleCommand({ type: 'LeaveGame', gameID }, player1);
-    //       expect(leaveSpy).toHaveBeenCalledWith(player1);
-    //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(2);
-    //     });
-    //     it('should not call _emitAreaChanged if the game throws an error', () => {
-    //       gameArea.handleCommand({ type: 'JoinGame' }, player1);
-    //       if (!game) {
-    //         throw new Error('Game was not created by the first call to join');
-    //       }
-    //       interactableUpdateSpy.mockClear();
-    //       const leaveSpy = jest.spyOn(game, 'leave').mockImplementationOnce(() => {
-    //         throw new Error('Test Error');
-    //       });
-    //       expect(() =>
-    //         gameArea.handleCommand({ type: 'LeaveGame', gameID: game.id }, player1),
-    //       ).toThrowError('Test Error');
-    //       expect(leaveSpy).toHaveBeenCalledWith(player1);
-    //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
-    //     });
-    //     it('should update the history if the game is over', () => {
-    //       const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
-    //       gameArea.handleCommand({ type: 'JoinGame' }, player2);
-    //       interactableUpdateSpy.mockClear();
-    //       jest.spyOn(game, 'leave').mockImplementationOnce(() => {
-    //         game.endGame(player1.id);
-    //       });
-    //       gameArea.handleCommand({ type: 'LeaveGame', gameID }, player1);
-    //       expect(game.state.status).toEqual('OVER');
-    //       expect(gameArea.history.length).toEqual(1);
-    //       expect(gameArea.history[0]).toEqual({
-    //         gameID: game.id,
-    //         scores: {
-    //           [player1.userName]: 1,
-    //           [player2.userName]: 0,
-    //         },
-    //       });
-    //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-    //     });
-    //   });
-    // });
-    // describe('[T3.4] when given an invalid command', () => {
-    //   it('should throw an error', () => {
-    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //     // @ts-ignore (Testing an invalid command, only possible at the boundary of the type system)
-    //     expect(() => gameArea.handleCommand({ type: 'InvalidCommand' }, player1)).toThrowError(
-    //       INVALID_COMMAND_MESSAGE,
-    //     );
-    //     expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        //     describe('when the game is over, it records a new row in the history and calls _emitAreaChanged', () => {
+        //       test('when all players win', () => {
+        //         const move: HangManMove = { letterGuess: 'a', playerID: player1.id };
+        //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
+        //           game.endGame(player1.id);
+        //         });
+        //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
+        //         expect(game.state.status).toEqual('OVER');
+        //         expect(gameArea.history.length).toEqual(1);
+        //         expect(gameArea.history[0]).toEqual({
+        //           gameID: game.id,
+        //           scores: {
+        //             [player1.userName]: 1,
+        //             'Player 2 (Undefined)': 0,
+        //             'Player 3 (Undefined)': 0,
+        //             'Player 4 (Undefined)': 0,
+        //           },
+        //         });
+        //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        //       });
+        //       test('when O wins', () => {
+        //         const move: TicTacToeMove = { col: 0, row: 0, gamePiece: 'O' };
+        //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
+        //           game.endGame(player2.id);
+        //         });
+        //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player2);
+        //         expect(game.state.status).toEqual('OVER');
+        //         expect(gameArea.history.length).toEqual(1);
+        //         expect(gameArea.history[0]).toEqual({
+        //           gameID: game.id,
+        //           scores: {
+        //             [player1.userName]: 0,
+        //             [player2.userName]: 1,
+        //           },
+        //         });
+        //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        //       });
+        //       test('when there is a tie', () => {
+        //         const move: TicTacToeMove = { col: 0, row: 0, gamePiece: 'X' };
+        //         jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
+        //           game.endGame();
+        //         });
+        //         gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
+        //         expect(game.state.status).toEqual('OVER');
+        //         expect(gameArea.history.length).toEqual(1);
+        //         expect(gameArea.history[0]).toEqual({
+        //           gameID: game.id,
+        //           scores: {
+        //             [player1.userName]: 0,
+        //             [player2.userName]: 0,
+        //           },
+        //         });
+        //         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        //       });
+        //     });
+        //   });
+        // });
+        // describe('[T3.3] when given a LeaveGame command', () => {
+        //   describe('when there is no game in progress', () => {
+        //     it('should throw an error', () => {
+        //       expect(() =>
+        //         gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player1),
+        //       ).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
+        //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        //     });
+        //   });
+        //   describe('when there is a game in progress', () => {
+        //     it('should throw an error when the game ID does not match', () => {
+        //       gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        //       interactableUpdateSpy.mockClear();
+        //       expect(() =>
+        //         gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player1),
+        //       ).toThrowError(GAME_ID_MISSMATCH_MESSAGE);
+        //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        //     });
+        //     it('should dispatch the leave command to the game and call _emitAreaChanged', () => {
+        //       const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        //       if (!game) {
+        //         throw new Error('Game was not created by the first call to join');
+        //       }
+        //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        //       const leaveSpy = jest.spyOn(game, 'leave');
+        //       gameArea.handleCommand({ type: 'LeaveGame', gameID }, player1);
+        //       expect(leaveSpy).toHaveBeenCalledWith(player1);
+        //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(2);
+        //     });
+        //     it('should not call _emitAreaChanged if the game throws an error', () => {
+        //       gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        //       if (!game) {
+        //         throw new Error('Game was not created by the first call to join');
+        //       }
+        //       interactableUpdateSpy.mockClear();
+        //       const leaveSpy = jest.spyOn(game, 'leave').mockImplementationOnce(() => {
+        //         throw new Error('Test Error');
+        //       });
+        //       expect(() =>
+        //         gameArea.handleCommand({ type: 'LeaveGame', gameID: game.id }, player1),
+        //       ).toThrowError('Test Error');
+        //       expect(leaveSpy).toHaveBeenCalledWith(player1);
+        //       expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        //     });
+        //     it('should update the history if the game is over', () => {
+        //       const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        //       gameArea.handleCommand({ type: 'JoinGame' }, player2);
+        //       interactableUpdateSpy.mockClear();
+        //       jest.spyOn(game, 'leave').mockImplementationOnce(() => {
+        //         game.endGame(player1.id);
+        //       });
+        //       gameArea.handleCommand({ type: 'LeaveGame', gameID }, player1);
+        //       expect(game.state.status).toEqual('OVER');
+        //       expect(gameArea.history.length).toEqual(1);
+        //       expect(gameArea.history[0]).toEqual({
+        //         gameID: game.id,
+        //         scores: {
+        //           [player1.userName]: 1,
+        //           [player2.userName]: 0,
+        //         },
+        //       });
+        //       expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        //     });
+        //   });
+        // });
+        // describe('[T3.4] when given an invalid command', () => {
+        //   it('should throw an error', () => {
+        //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //     // @ts-ignore (Testing an invalid command, only possible at the boundary of the type system)
+        //     expect(() => gameArea.handleCommand({ type: 'InvalidCommand' }, player1)).toThrowError(
+        //       INVALID_COMMAND_MESSAGE,
+        //     );
+        //     expect(interactableUpdateSpy).not.toHaveBeenCalled();
       });
     });
   });
