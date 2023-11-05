@@ -30,60 +30,64 @@ export default class HangmanGameArea extends GameArea<HangmanGame> {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
       if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
-          const { player1, player2, player3, player4 } = updatedState.state;
-          let player1Name = "";
-          let player2Name ="";
-          let player3Name ="";
-          let player4Name ="";
+        const { player1, player2, player3, player4 } = updatedState.state;
+        let player1Name = '';
+        let player2Name = '';
+        let player3Name = '';
+        let player4Name = '';
 
-          let isPlayer1Winner = false;
-          let isPlayer2Winner = false;
-          let isPlayer3Winner = false;
-          let isPlayer4Winner = false;
-          if (player1) {
-              player1Name = this._occupants.find(eachPlayer => eachPlayer.id === player1)?.userName || player1;
-              if (updatedState.state.winner?.includes(player1)) {
-                  isPlayer1Winner = true
-              }
-          } else {
-              player1Name = "Player 1 (Undefined)"
+        let isPlayer1Winner = false;
+        let isPlayer2Winner = false;
+        let isPlayer3Winner = false;
+        let isPlayer4Winner = false;
+        if (player1) {
+          player1Name =
+            this._occupants.find(eachPlayer => eachPlayer.id === player1)?.userName || player1;
+          if (updatedState.state.winner?.includes(player1)) {
+            isPlayer1Winner = true;
           }
-          if (player2) {
-              player2Name = this._occupants.find(eachPlayer => eachPlayer.id === player2)?.userName || player2;
-              if (updatedState.state.winner?.includes(player2)) {
-                  isPlayer2Winner = true
-              }
-          } else {
-              player2Name = "Player 2 (Undefined)"
+        } else {
+          player1Name = 'Player 1 (Undefined)';
+        }
+        if (player2) {
+          player2Name =
+            this._occupants.find(eachPlayer => eachPlayer.id === player2)?.userName || player2;
+          if (updatedState.state.winner?.includes(player2)) {
+            isPlayer2Winner = true;
           }
-          if (player3) {
-              player3Name = this._occupants.find(eachPlayer => eachPlayer.id === player3)?.userName || player3;
-              if (updatedState.state.winner?.includes(player3)) {
-                  isPlayer3Winner = true
-              }
-          } else {
-              player3Name = "Player 3 (Undefined)"
+        } else {
+          player2Name = 'Player 2 (Undefined)';
+        }
+        if (player3) {
+          player3Name =
+            this._occupants.find(eachPlayer => eachPlayer.id === player3)?.userName || player3;
+          if (updatedState.state.winner?.includes(player3)) {
+            isPlayer3Winner = true;
           }
-          if (player4) {
-              player4Name = this._occupants.find(eachPlayer => eachPlayer.id === player4)?.userName || player4;
-              if (updatedState.state.winner?.includes(player4)) {
-                  isPlayer4Winner = true
-              }
-          } else {
-              player4Name = "Player 4 (Undefined)"
+        } else {
+          player3Name = 'Player 3 (Undefined)';
+        }
+        if (player4) {
+          player4Name =
+            this._occupants.find(eachPlayer => eachPlayer.id === player4)?.userName || player4;
+          if (updatedState.state.winner?.includes(player4)) {
+            isPlayer4Winner = true;
           }
+        } else {
+          player4Name = 'Player 4 (Undefined)';
+        }
 
-          const score = {
-              [player1Name]: isPlayer1Winner ? 1 : 0,
-              [player2Name]: isPlayer2Winner ? 1 : 0,
-              [player3Name]: isPlayer3Winner ? 1 : 0,
-              [player4Name]: isPlayer4Winner ? 1 : 0,
-          }
+        const score = {
+          [player1Name]: isPlayer1Winner ? 1 : 0,
+          [player2Name]: isPlayer2Winner ? 1 : 0,
+          [player3Name]: isPlayer3Winner ? 1 : 0,
+          [player4Name]: isPlayer4Winner ? 1 : 0,
+        };
 
-          this._history.push({
-              gameID,
-              scores: score,
-          });
+        this._history.push({
+          gameID,
+          scores: score,
+        });
       }
     }
     this._emitAreaChanged();
@@ -123,7 +127,7 @@ export default class HangmanGameArea extends GameArea<HangmanGame> {
       if (this._game?.id !== command.gameID) {
         throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
       }
-      
+
       game.applyMove({
         gameID: command.gameID,
         playerID: player.id,

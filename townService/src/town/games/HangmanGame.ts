@@ -60,9 +60,13 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    */
   public applyMove(move: GameMove<HangManMove>): void {
     // Find if any of the moves have the letter
-    const findMove = this.state.guesses.find((letter) => letter.move.letterGuess === move.move.letterGuess);
+    const findMove = this.state.guesses.find(
+      letter => letter.move.letterGuess === move.move.letterGuess,
+    );
     // Find if any of the moves have that guess
-    const findGuessWord = this.state.guesses.find((guessWord) => guessWord.move.wordGuess === move.move.wordGuess);
+    const findGuessWord = this.state.guesses.find(
+      guessWord => guessWord.move.wordGuess === move.move.wordGuess,
+    );
 
     // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
     // means the move has not been attempted

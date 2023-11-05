@@ -16,7 +16,6 @@ import {
 import HangManGameArea from './HangmanGameArea';
 import * as HangManGameModule from './HangmanGame';
 import Game from './Game';
-import HangmanGameArea from './HangmanGameArea';
 
 class TestingGame extends Game<HangManGameState, HangManMove> {
   public constructor() {
@@ -42,17 +41,17 @@ class TestingGame extends Game<HangManGameState, HangManMove> {
   protected _join(player: Player): void {
     if (player) {
       if (!this.state.player1) {
-        this.state.player1 = player.id
+        this.state.player1 = player.id;
       } else if (!this.state.player2) {
-        this.state.player2 = player.id
+        this.state.player2 = player.id;
       } else if (!this.state.player3) {
-        this.state.player3 = player.id
+        this.state.player3 = player.id;
       } else if (!this.state.player4) {
-        this.state.player4 = player.id
+        this.state.player4 = player.id;
       }
-    this._players.push(player);
+      this._players.push(player);
+    }
   }
-}
 
   protected _leave(): void {}
 }
@@ -159,7 +158,11 @@ describe('HangManGameArea', () => {
       it('should throw an error when there is no game in progress', () => {
         expect(() =>
           gameArea.handleCommand(
-            { type: 'GameMove', move: { letterGuess: 'a', playerID: player1.id}, gameID: nanoid() },
+            {
+              type: 'GameMove',
+              move: { letterGuess: 'a', playerID: player1.id },
+              gameID: nanoid(),
+            },
             player1,
           ),
         ).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
@@ -176,7 +179,11 @@ describe('HangManGameArea', () => {
         it('should throw an error when the game ID does not match', () => {
           expect(() =>
             gameArea.handleCommand(
-              { type: 'GameMove', move: { letterGuess: 'a', playerID: player1.id }, gameID: nanoid() },
+              {
+                type: 'GameMove',
+                move: { letterGuess: 'a', playerID: player1.id },
+                gameID: nanoid(),
+              },
               player1,
             ),
           ).toThrowError(GAME_ID_MISSMATCH_MESSAGE);
@@ -188,7 +195,7 @@ describe('HangManGameArea', () => {
           expect(applyMoveSpy).toHaveBeenCalledWith({
             gameID: game.id,
             playerID: player1.id,
-            move: move,
+            move,
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
         });
@@ -203,7 +210,7 @@ describe('HangManGameArea', () => {
           expect(applyMoveSpy).toHaveBeenCalledWith({
             gameID: game.id,
             playerID: player1.id,
-            move: move,
+            move,
           });
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
         });
@@ -220,9 +227,9 @@ describe('HangManGameArea', () => {
               gameID: game.id,
               scores: {
                 [player1.userName]: 1,
-                ["Player 2 (Undefined)"]: 0,
-                ["Player 3 (Undefined)"]: 0,
-                ["Player 4 (Undefined)"]: 0,
+                'Player 2 (Undefined)': 0,
+                'Player 3 (Undefined)': 0,
+                'Player 4 (Undefined)': 0,
               },
             });
             expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
