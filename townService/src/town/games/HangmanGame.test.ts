@@ -3,6 +3,7 @@ import {
   GAME_IN_PROGRESS_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
   INVALID_GUESS,
+
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
@@ -75,6 +76,8 @@ describe('HangManGame', () => {
       expect(game.state.status).toEqual('WAITING_TO_START');
       expect(game.state.mistakes).toEqual([]);
       expect(game.state.guesses).toEqual([]);
+      
+      expect(game.activePlayers.length).toEqual(0);
     });
     it('should throw an error if the player is not in the game', () => {
       const player1 = createPlayerForTesting();
@@ -180,6 +183,26 @@ describe('HangManGame', () => {
             }),
           ).toThrowError(INVALID_GUESS);
         });
+        // it('should throw error if they make an invalid guess', () => {
+        //   game.applyMove({
+        //     gameID: game.id,
+        //     playerID: player1.id,
+        //     move: {
+        //       letterGuess: 'a',
+        //       playerID: player1.id,
+        //     },
+        //   });
+        //   expect(() =>
+        //     game.applyMove({
+        //       gameID: game.id,
+        //       playerID: player2.id,
+        //       move: {
+        //         letterGuess: 'a',
+        //         playerID: player2.id,
+        //       },
+        //     }),
+        //   ).toThrowError(INVALID_GUESS);
+        // });
         it('checks if it all goes to the correct turn', () => {
           expect(game.state.guesses).toEqual([]);
           game.applyMove({
@@ -246,6 +269,36 @@ describe('HangManGame', () => {
           });
           expect(game.state.guesses.length).toEqual(3);
         });
+
+        // it('win case', () => {
+        //   game.state.word = 'cup';
+        //   expect(game.state.guesses).toEqual([]);
+        //   game.applyMove({
+        //     gameID: game.id,
+        //     playerID: player1.id,
+        //     move: {
+        //       letterGuess: 'c',
+        //       playerID: player1.id,
+        //     },
+        //   });
+        //   game.applyMove({
+        //     gameID: game.id,
+        //     playerID: player2.id,
+        //     move: {
+        //       letterGuess: 'u',
+        //       playerID: player2.id,
+        //     },
+        //   });
+        //   game.applyMove({
+        //     gameID: game.id,
+        //     playerID: player3.id,
+        //     move: {
+        //       letterGuess: 'p',
+        //       playerID: player3.id,
+        //     },
+        //   });
+        //   expect(game.state.status).toEqual('OVER');
+        // });
       });
     });
   });
