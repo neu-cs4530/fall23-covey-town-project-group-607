@@ -18,16 +18,16 @@ export type TownJoinResponse = {
 }
 
 export interface HangManMove {
-  letterGuess?: 'A' | 'B' | 'C' | 'D' | 'E' |
-  'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'| 'O' |
-  'P' | 'Q' | 'R' | 'S' | 'T' | 'U'| 'V' | 'W' | 'X' | 'Y' | 'Z',
+  letterGuess?: 'a' | 'b' | 'c' | 'd' | 'e' |
+  'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'| 'o' |
+  'p' | 'q' | 'r' | 's' | 't' | 'u'| 'v' | 'w' | 'x' | 'y' | 'z',
   wordGuess?: string,
   playerID?: PlayerID
 }
 
 export interface HangManGameState extends WinnableGameState {
-  guesses: ReadonlyArray<HangManMove>;
-  mistakes: ReadonlyArray<HangManMove>;
+  guesses: ReadonlyArray<GameMove<HangManMove>>;
+  mistakes: ReadonlyArray<GameMove<HangManMove>>;
   word: string;
   player1?: PlayerID;
   player2?: PlayerID;
@@ -35,7 +35,7 @@ export interface HangManGameState extends WinnableGameState {
   player4?: PlayerID;
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'HangmanArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -192,7 +192,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | GameMoveCommand<HangManMove>;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -213,6 +213,7 @@ export type InteractableCommandReturnType<CommandType extends InteractableComman
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
+  CommandType extends GameMoveCommand<HangManMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   never;
 

@@ -7,6 +7,7 @@ import InvalidParametersError, {
   PLAYER_NOT_IN_GAME_MESSAGE,
   INVALID_MOVE_MESSAGE,
   GAME_IN_PROGRESS_MESSAGE,
+  INVALID_GUESS,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
 import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
@@ -14,7 +15,7 @@ import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
-export default class HangmanGame extends Game<HangManGameState, HangManMove> {
+export default class HangManGame extends Game<HangManGameState, HangManMove> {
   public currentGuess: string[];
 
   public activePlayers: PlayerID[];
@@ -59,6 +60,16 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    * @param move
    */
   public applyMove(move: GameMove<HangManMove>): void {
+    // Find if any of the moves have the letter
+    const findMove = this.state.guesses.find((letter) => letter.move.letterGuess === move.move.letterGuess);
+    // Find if any of the moves have that guess
+    const findGuessWord = this.state.guesses.find((guessWord) => guessWord.move.wordGuess === move.move.wordGuess);
+
+    // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
+    // means the move has not been attempted
+    if (findMove !== undefined && findGuessWord !== undefined) {
+      throw new InvalidParametersError(INVALID_GUESS);
+    }
     // check if letterGuess and wordGuess is not given
     if (move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
@@ -80,6 +91,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     // apply move after checking if the move is invalid
     this._validMove(move);
+    // console.log(this.state.guesses);
   }
 
   /**
@@ -194,6 +206,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     } else if (this._players.length === 3 && !this.state.player4) {
       this.state.player4 = player.id;
       this.activePlayers.push(this.state.player4);
+      this.state.status = 'IN_PROGRESS';
     } else {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
