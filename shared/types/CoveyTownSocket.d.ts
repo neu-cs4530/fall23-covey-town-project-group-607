@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export interface HangmanMove {
+export interface HangManMove {
   letterGuess?: 'a' | 'b' | 'c' | 'd' | 'e' |
   'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'| 'n' | 'o' |
   'p' | 'q' | 'r' | 's' | 't' | 'u'| 'v' | 'w' | 'x' | 'y' | 'z',
@@ -25,9 +25,9 @@ export interface HangmanMove {
   playerID?: PlayerID
 }
 
-export interface HangmanGameState extends WinnableGameState {
-  guesses: ReadonlyArray<HangmanMove>;
-  mistakes: ReadonlyArray<HangmanMove>;
+export interface HangManGameState extends WinnableGameState {
+  guesses: ReadonlyArray<GameMove<HangManMove>>;
+  mistakes: ReadonlyArray<GameMove<HangManMove>>;
   word: string;
   currentGuess: string[];
   player1?: PlayerID;
@@ -36,7 +36,7 @@ export interface HangmanGameState extends WinnableGameState {
   player4?: PlayerID;
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'HangmanArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -193,7 +193,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<HangManMove> | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;

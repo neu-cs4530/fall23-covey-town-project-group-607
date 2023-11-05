@@ -6,14 +6,15 @@ import InvalidParametersError, {
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
   INVALID_MOVE_MESSAGE,
+  INVALID_GUESS,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangmanGameState, HangmanMove, PlayerID } from '../../types/CoveyTownSocket';
+import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
 import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
-export default class HangmanGame extends Game<HangmanGameState, HangmanMove> {
+export default class HangmanGame extends Game<HangManGameState, HangManMove> {
   public activePlayers: PlayerID[];
 
   public constructor() {
@@ -57,7 +58,21 @@ export default class HangmanGame extends Game<HangmanGameState, HangmanMove> {
    * The players win if their guessedWord is the same as word or guessLetter is the last and correct letter guess (currentGuess matches word)
    * @param move
    */
-  public applyMove(move: GameMove<HangmanMove>): void {
+  public applyMove(move: GameMove<HangManMove>): void {
+    // Find if any of the moves have the letter
+    const findMove = this.state.guesses.find(
+      letter => letter.move.letterGuess === move.move.letterGuess,
+    );
+    // Find if any of the moves have that guess
+    const findGuessWord = this.state.guesses.find(
+      guessWord => guessWord.move.wordGuess === move.move.wordGuess,
+    );
+
+    // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
+    // means the move has not been attempted
+    if (findMove !== undefined && findGuessWord !== undefined) {
+      throw new InvalidParametersError(INVALID_GUESS);
+    }
     // check if letterGuess and wordGuess is not given
     if (move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
@@ -101,7 +116,7 @@ export default class HangmanGame extends Game<HangmanGameState, HangmanMove> {
    * Then it alternates the turn to the next player
    * @param player_move is the player's move
    */
-  private _validMove(player_move: GameMove<HangmanMove>): void {
+  private _validMove(player_move: GameMove<HangManMove>): void {
     // add move to the guesses list and update game status
     const updatedGuesses = [...this.state.guesses, player_move];
     const updatedMistakes = [...this.state.mistakes, player_move];
