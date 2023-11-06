@@ -92,21 +92,6 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
 
-    // Check if the move is invalid
-    // Find if any of the moves have the letter
-    // const findMove = copyMoves.find(letter => letter.letterGuess === move.move.letterGuess);
-    // // Find if any of the moves have that guess
-    // const findGuessWord = copyMoves.find(guessWord => guessWord.wordGuess === move.move.wordGuess);
-    // console.log(`Find Move:${findMove}`);
-    // console.log(`Find GuessWord:${findMove}`);
-    // console.log(copyMoves); // Check the contents of copyMoves
-    // console.log(copyMoves.find(letter => letter.letterGuess === 'a')); // Check the result of the find method
-    // // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
-    // // means the move has not been attempted
-    // if (findMove !== undefined && findGuessWord !== undefined) {
-    //   throw new InvalidParametersError(INVALID_GUESS);
-    // }
-
     // apply move after checking if the move is invalid
     this._validMove(move);
   }
@@ -267,7 +252,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
         guesses: [],
         mistakes: [],
         word: this._generateRandomWord(),
-        status: 'WAITING_TO_START',
+        status: 'OVER',
         currentGuess: [],
       };
     }

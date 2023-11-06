@@ -275,6 +275,7 @@ describe('TicTacToeGameArea', () => {
         it('should update the history if the game is over', () => {
           const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
           gameArea.handleCommand({ type: 'JoinGame' }, player2);
+          expect(game.state.status).toEqual('IN_PROGRESS');
           interactableUpdateSpy.mockClear();
           jest.spyOn(game, 'leave').mockImplementationOnce(() => {
             game.endGame(player1.id);
