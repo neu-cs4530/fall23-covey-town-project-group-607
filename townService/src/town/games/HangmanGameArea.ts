@@ -43,40 +43,31 @@ export default class HangmanGameArea extends GameArea<HangmanGame> {
         if (player1) {
           player1Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player1)?.userName || player1;
-          if (updatedState.state.winner?.includes(player1)) {
+          if (updatedState.state.winner?.includes(player1Name)) {
             isPlayer1Winner = true;
           }
-        } else {
-          player1Name = 'Player 1 (Undefined)';
         }
         if (player2) {
           player2Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player2)?.userName || player2;
-          if (updatedState.state.winner?.includes(player2)) {
+          if (updatedState.state.winner?.includes(player2Name)) {
             isPlayer2Winner = true;
           }
-        } else {
-          player2Name = 'Player 2 (Undefined)';
         }
         if (player3) {
           player3Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player3)?.userName || player3;
-          if (updatedState.state.winner?.includes(player3)) {
+          if (updatedState.state.winner?.includes(player3Name)) {
             isPlayer3Winner = true;
           }
-        } else {
-          player3Name = 'Player 3 (Undefined)';
         }
         if (player4) {
           player4Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player4)?.userName || player4;
-          if (updatedState.state.winner?.includes(player4)) {
+          if (updatedState.state.winner?.includes(player4Name)) {
             isPlayer4Winner = true;
           }
-        } else {
-          player4Name = 'Player 4 (Undefined)';
         }
-
         const score = {
           [player1Name]: isPlayer1Winner ? 1 : 0,
           [player2Name]: isPlayer2Winner ? 1 : 0,

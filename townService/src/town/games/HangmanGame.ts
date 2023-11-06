@@ -269,7 +269,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
         guesses: [],
         mistakes: [],
         word: this._generateRandomWord(),
-        status: 'WAITING_TO_START',
+        status: 'OVER',
         currentGuess: [],
       };
     }
