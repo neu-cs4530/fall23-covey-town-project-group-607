@@ -70,7 +70,7 @@ describe('HangmanGame', () => {
       expect(game.state.player4).toEqual(undefined);
       game.leave(player3);
       expect(game.state.player3).toEqual(undefined);
-      expect(game.state.status).toEqual('WAITING_TO_START');
+      expect(game.state.status).toEqual('OVER');
       expect(game.state.mistakes).toEqual([]);
       expect(game.state.guesses).toEqual([]);
       expect(game.activePlayers.length).toEqual(0);
