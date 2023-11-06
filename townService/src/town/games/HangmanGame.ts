@@ -92,21 +92,6 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
 
-    // Check if the move is invalid
-    // Find if any of the moves have the letter
-    // const findMove = copyMoves.find(letter => letter.letterGuess === move.move.letterGuess);
-    // // Find if any of the moves have that guess
-    // const findGuessWord = copyMoves.find(guessWord => guessWord.wordGuess === move.move.wordGuess);
-    // console.log(`Find Move:${findMove}`);
-    // console.log(`Find GuessWord:${findMove}`);
-    // console.log(copyMoves); // Check the contents of copyMoves
-    // console.log(copyMoves.find(letter => letter.letterGuess === 'a')); // Check the result of the find method
-    // // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
-    // // means the move has not been attempted
-    // if (findMove !== undefined && findGuessWord !== undefined) {
-    //   throw new InvalidParametersError(INVALID_GUESS);
-    // }
-
     // apply move after checking if the move is invalid
     this._validMove(move);
   }
@@ -127,14 +112,32 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       // check if word contains that letter first
       if (this.state.word.includes(letterGuess)) {
         // add correct letter guess to currentGuess at the correct index
-        const index = this.state.word.indexOf(letterGuess);
-        this.state.currentGuess[index] = letterGuess;
-        this.state = {
-          ...this.state,
-          guesses: updatedGuesses,
-        };
+        for (let i = 0; i < this.state.word.length; i++) {
+          if (this.state.word[i] === letterGuess) {
+            this.state.currentGuess[i] = letterGuess;
+          }
+        }
+
+        const winnersList = [];
+        for (const play of this._players) {
+          winnersList.push(play.id);
+        }
+        // Check for win condition
+        if (this.state.currentGuess.includes('')) {
+          this.state = {
+            ...this.state,
+            guesses: updatedGuesses,
+          };
+        } else {
+          this.state = {
+            ...this.state,
+            guesses: updatedGuesses,
+            status: 'OVER',
+            winner: winnersList,
+          };
+        }
       } // if the word does not contain that letter add to mistakes
-      else if (updatedMistakes.length === 6) {
+      else if (updatedMistakes.length === 10) {
         // change the game state to be OVER
         this.state = {
           ...this.state,
@@ -155,8 +158,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     if (player_move.move.wordGuess) {
       const { wordGuess } = player_move.move;
       // check if the word matches with the guessed word
-      // eslint-disable-next-line prefer-const
-      let winnersList = [];
+      const winnersList = [];
       for (const play of this._players) {
         winnersList.push(play.id);
       }

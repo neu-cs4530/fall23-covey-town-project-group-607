@@ -114,9 +114,10 @@ describe('HangmanGame', () => {
           game.join(player4);
           expect(game.state.status).toEqual('IN_PROGRESS');
         });
-        it('should throw an error if the player is not in the game', () => {
+        it('Checks if all the initialization is correct', () => {
           expect(game.state.guesses).toEqual([]);
           expect(game.state.mistakes).toEqual([]);
+          expect(game.state.currentGuess.length).toEqual(game.state.word.length);
         });
         it('should throw error if its not their turn', () => {
           game.applyMove({
@@ -245,35 +246,186 @@ describe('HangmanGame', () => {
           });
           expect(game.state.guesses.length).toEqual(3);
         });
-        // it('win case', () => {
-        //   game.state.word = 'cup';
-        //   expect(game.state.guesses).toEqual([]);
-        //   game.applyMove({
-        //     gameID: game.id,
-        //     playerID: player1.id,
-        //     move: {
-        //       letterGuess: 'c',
-        //       playerID: player1.id,
-        //     },
-        //   });
-        //   game.applyMove({
-        //     gameID: game.id,
-        //     playerID: player2.id,
-        //     move: {
-        //       letterGuess: 'u',
-        //       playerID: player2.id,
-        //     },
-        //   });
-        //   game.applyMove({
-        //     gameID: game.id,
-        //     playerID: player3.id,
-        //     move: {
-        //       letterGuess: 'p',
-        //       playerID: player3.id,
-        //     },
-        //   });
-        //   expect(game.state.status).toEqual('OVER');
-        // });
+        it('win case', () => {
+          game.state.word = 'cup';
+          game.state.currentGuess = ['', '', ''];
+          expect(game.state.guesses).toEqual([]);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              letterGuess: 'c',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.status).toEqual('IN_PROGRESS');
+          expect(game.state.currentGuess).toEqual(['c', '', '']);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player2.id,
+            move: {
+              letterGuess: 'u',
+              playerID: player2.id,
+            },
+          });
+          game.applyMove({
+            gameID: game.id,
+            playerID: player3.id,
+            move: {
+              letterGuess: 'p',
+              playerID: player3.id,
+            },
+          });
+          expect(game.state.status).toEqual('OVER');
+          expect(game.state.winner).toEqual([player1.id, player2.id, player3.id, player4.id]);
+        });
+        it('win case 2', () => {
+          game.state.word = 'cup';
+          game.state.currentGuess = ['', '', ''];
+          expect(game.state.guesses).toEqual([]);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              wordGuess: 'cup',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.status).toEqual('OVER');
+          expect(game.state.winner).toEqual([player1.id, player2.id, player3.id, player4.id]);
+        });
+
+        it('win case but a player leaving mid game', () => {
+          game.state.word = 'cup';
+          game.state.currentGuess = ['', '', ''];
+          expect(game.state.guesses).toEqual([]);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              letterGuess: 'c',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.status).toEqual('IN_PROGRESS');
+          expect(game.state.currentGuess).toEqual(['c', '', '']);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player2.id,
+            move: {
+              letterGuess: 'u',
+              playerID: player2.id,
+            },
+          });
+          game.leave(player3);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player4.id,
+            move: {
+              letterGuess: 'p',
+              playerID: player4.id,
+            },
+          });
+          expect(game.state.status).toEqual('OVER');
+          expect(game.state.winner).toEqual([player1.id, player2.id, player4.id]);
+        });
+        it('lose scenario', () => {
+          game.state.word = 'cup';
+          game.state.currentGuess = ['', '', ''];
+          expect(game.state.guesses).toEqual([]);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              wordGuess: 'tom',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(1);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player2.id,
+            move: {
+              letterGuess: 'o',
+              playerID: player2.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(2);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player3.id,
+            move: {
+              letterGuess: 'f',
+              playerID: player3.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(3);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player4.id,
+            move: {
+              letterGuess: 't',
+              playerID: player4.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(4);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              letterGuess: 'z',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(5);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player2.id,
+            move: {
+              letterGuess: 'i',
+              playerID: player2.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(6);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player3.id,
+            move: {
+              letterGuess: 'e',
+              playerID: player3.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(7);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player4.id,
+            move: {
+              letterGuess: 'd',
+              playerID: player4.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(8);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player1.id,
+            move: {
+              letterGuess: 'b',
+              playerID: player1.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(9);
+          game.applyMove({
+            gameID: game.id,
+            playerID: player2.id,
+            move: {
+              letterGuess: 'a',
+              playerID: player2.id,
+            },
+          });
+          expect(game.state.mistakes.length).toEqual(10);
+          expect(game.state.status).toEqual('OVER');
+          expect(game.state.winner).toEqual(undefined);
+        });
       });
     });
   });
