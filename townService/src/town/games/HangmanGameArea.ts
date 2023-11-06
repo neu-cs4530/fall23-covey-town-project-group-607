@@ -53,7 +53,7 @@ export default class HangmanGameArea extends GameArea<HangmanGame> {
           if (updatedState.state.winner?.includes(player2Name)) {
             isPlayer2Winner = true;
           }
-        } 
+        }
         if (player3) {
           player3Name =
             this._occupants.find(eachPlayer => eachPlayer.id === player3)?.userName || player3;
