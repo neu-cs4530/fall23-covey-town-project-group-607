@@ -9,13 +9,12 @@ import InvalidParametersError, {
   INVALID_GUESS,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
+import { GameMove, HangManGameState, HangManMove } from '../../types/CoveyTownSocket';
 import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
 export default class HangmanGame extends Game<HangManGameState, HangManMove> {
-
   public constructor() {
     super({
       guesses: [],
