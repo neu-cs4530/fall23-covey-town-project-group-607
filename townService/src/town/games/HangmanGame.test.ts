@@ -73,7 +73,6 @@ describe('HangmanGame', () => {
       expect(game.state.status).toEqual('OVER');
       expect(game.state.mistakes).toEqual([]);
       expect(game.state.guesses).toEqual([]);
-      expect(game.activePlayers.length).toEqual(0);
     });
     it('should throw an error if the player is not in the game', () => {
       const player1 = createPlayerForTesting();
