@@ -9,14 +9,12 @@ import InvalidParametersError, {
   INVALID_GUESS,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { GameMove, HangManGameState, HangManMove, PlayerID } from '../../types/CoveyTownSocket';
+import { GameMove, HangManGameState, HangManMove } from '../../types/CoveyTownSocket';
 import Game from './Game';
 /**
  * A HangmanGame is a game that implements the rules of Hangman
  */
 export default class HangmanGame extends Game<HangManGameState, HangManMove> {
-  public activePlayers: PlayerID[];
-
   public constructor() {
     super({
       guesses: [],
@@ -25,7 +23,6 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       status: 'WAITING_TO_START',
       currentGuess: [],
     });
-    this.activePlayers = [];
     this.state.word = this._generateRandomWord();
 
     // initialize currentGuesses
@@ -83,9 +80,9 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     const copyMoves = [...this.state.guesses];
     const totalMoves = copyMoves.length;
-    const totalActivePlayers = this.activePlayers.length;
+    const totalActivePlayers = this._players.length;
     const currentTurnIndex = totalMoves % totalActivePlayers;
-    const currentTurn = this.activePlayers[currentTurnIndex];
+    const currentTurn = this._players[currentTurnIndex].id;
 
     // Checks if it's their turn
     if (move.playerID !== currentTurn) {
@@ -202,16 +199,12 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     if (this._players.length === 0 && !this.state.player1) {
       this.state.player1 = player.id;
-      this.activePlayers.push(this.state.player1);
     } else if (this._players.length === 1 && !this.state.player2) {
       this.state.player2 = player.id;
-      this.activePlayers.push(this.state.player2);
     } else if (this._players.length === 2 && !this.state.player3) {
       this.state.player3 = player.id;
-      this.activePlayers.push(this.state.player3);
     } else if (this._players.length === 3 && !this.state.player4) {
       this.state.player4 = player.id;
-      this.activePlayers.push(this.state.player4);
       this.state.status = 'IN_PROGRESS';
     }
   }
@@ -246,19 +239,15 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     // Remove players
     if (this.state.player1 === player.id) {
-      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
       this.state.player1 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player2 === player.id) {
-      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
       this.state.player2 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player3 === player.id) {
-      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
       this.state.player3 = undefined;
       this._removePlayersGuesses(player);
     } else if (this.state.player4 === player.id) {
-      this.activePlayers = this.activePlayers.filter(p => p !== player.id);
       this.state.player4 = undefined;
       this._removePlayersGuesses(player);
     }
