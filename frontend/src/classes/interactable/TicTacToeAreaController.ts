@@ -103,7 +103,7 @@ export default class TicTacToeAreaController extends GameAreaController<
   }
 
   get isOurTurn(): boolean {
-    return this.whoseTurn?.id === this._townController.ourPlayer.id;
+    return this.whoseTurn?.id === this._townController.ourPlayer?.id;
   }
 
   /**
@@ -119,9 +119,9 @@ export default class TicTacToeAreaController extends GameAreaController<
    * Throws an error PLAYER_NOT_IN_GAME_ERROR if the current player is not a player in this game
    */
   get gamePiece(): 'X' | 'O' {
-    if (this.x?.id === this._townController.ourPlayer.id) {
+    if (this.x?.id === this._townController.ourPlayer?.id) {
       return 'X';
-    } else if (this.o?.id === this._townController.ourPlayer.id) {
+    } else if (this.o?.id === this._townController.ourPlayer?.id) {
       return 'O';
     }
     throw new Error(PLAYER_NOT_IN_GAME_ERROR);
@@ -159,7 +159,7 @@ export default class TicTacToeAreaController extends GameAreaController<
    * If the turn has not changed, does not emit the event.
    */
   protected _updateFrom(newModel: GameArea<TicTacToeGameState>): void {
-    const wasOurTurn = this.whoseTurn?.id === this._townController.ourPlayer.id;
+    const wasOurTurn = this.whoseTurn?.id === this._townController.ourPlayer?.id;
     super._updateFrom(newModel);
     const newState = newModel.game;
     if (newState) {
@@ -176,7 +176,7 @@ export default class TicTacToeAreaController extends GameAreaController<
         this.emit('boardChanged', this._board);
       }
     }
-    const isOurTurn = this.whoseTurn?.id === this._townController.ourPlayer.id;
+    const isOurTurn = this.whoseTurn?.id === this._townController.ourPlayer?.id;
     if (wasOurTurn != isOurTurn) this.emit('turnChanged', isOurTurn);
   }
 

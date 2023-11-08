@@ -8,7 +8,7 @@
         "heroku-postbuild": "cd townService && npm install && npm run build",
         "run-townservice": "heroku local -p 3001 web",
         "lint": "cd townService && npm run-script lint && cd ../frontend && npm run-script lint && cd ../shared && npm run-script lint",
-		"zip": "npm-pack-zip"
+        "zip": "npm-pack-zip"
     },
     "repository": {
         "type": "git",
@@ -21,7 +21,8 @@
     },
     "homepage": "https://github.com/neu-se/covey.town#readme",
     "devDependencies": {
-        "@types/jest": "^26.0.15",
+        "@types/jest": "^26.0.24",
+        "@types/mocha": "^10.0.3",
         "@typescript-eslint/eslint-plugin": "^4.8.1",
         "@typescript-eslint/parser": "^4.8.1",
         "eslint": "^7.13.0",
@@ -48,5 +49,5 @@
         "frontend/src/components/Town/interactables/TicTacToe/TicTacToeArea.tsx",
         "frontend/src/components/Town/interactables/TicTacToe/TicTacToeBoard.tsx",
         "frontend/src/components/Town/interactables/Leaderboard.tsx"
-        ]
+    ]
 }

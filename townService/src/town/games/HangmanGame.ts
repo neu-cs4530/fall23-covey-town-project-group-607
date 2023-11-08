@@ -15,6 +15,8 @@ import Game from './Game';
  * A HangmanGame is a game that implements the rules of Hangman
  */
 export default class HangmanGame extends Game<HangManGameState, HangManMove> {
+  protected allGuesses: string[];
+
   public constructor() {
     super({
       guesses: [],
@@ -29,6 +31,7 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     for (let i = 0; i < this.state.word.length; i++) {
       this.state.currentGuess.push('');
     }
+    this.allGuesses = [];
   }
 
   private _generateRandomWord(): string {
@@ -57,13 +60,9 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    */
   public applyMove(move: GameMove<HangManMove>): void {
     // Find if any of the moves have the letter
-    const findMove = this.state.guesses.find(
-      letter => letter.move.letterGuess === move.move.letterGuess,
-    );
+    const findMove = this.allGuesses.find(letter => letter === move.move.letterGuess);
     // Find if any of the moves have that guess
-    const findGuessWord = this.state.guesses.find(
-      guessWord => guessWord.move.wordGuess === move.move.wordGuess,
-    );
+    const findGuessWord = this.allGuesses.find(guessWord => guessWord === move.move.wordGuess);
 
     // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
     // means the move has not been attempted
@@ -114,7 +113,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
             this.state.currentGuess[i] = letterGuess;
           }
         }
-
+        // append to allGuesses if guessed correct letter
+        this.allGuesses.push(letterGuess);
         const winnersList = [];
         for (const play of this._players) {
           winnersList.push(play.id);
@@ -160,6 +160,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
         winnersList.push(play.id);
       }
       if (this.state.word === wordGuess) {
+        // append to allGuesses if guessed correct word
+        this.allGuesses.push(wordGuess);
         // add the word to guesses
         this.state = {
           ...this.state,

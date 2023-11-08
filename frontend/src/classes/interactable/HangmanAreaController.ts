@@ -22,6 +22,12 @@ export default class HangmanAreaController extends GameAreaController<
   HangManGameState,
   HangManEvents
 > {
+  protected _guesses: HangManMove[] = []
+
+  get guesses(): HangManMove[] {
+    return this._guesses
+  }
+
   /**
    * Checks if the game is currently active or not
    */
@@ -58,10 +64,14 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Returns the winner of the game, if there is one
    */
-  get winner(): PlayerController | undefined {
+  get winner(): PlayerController[] | undefined {
     const winner = this._model.game?.state.winner;
+    const allWinners = [];
     if (winner) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === winner);
+      for (const player of winner) {
+        allWinners.push(this._townController.getPlayer(player));
+      }
+      return allWinners as PlayerController[];
     }
     return undefined;
   }
@@ -101,7 +111,11 @@ export default class HangmanAreaController extends GameAreaController<
    * Returns true if the current player is a player in this game
    */
   get isPlayer(): boolean {
-    return this._model.game?.players.includes(this._townController.ourPlayer.id) || false;
+    const ourPlayer = this._townController.ourPlayer
+    if (ourPlayer) {
+      return this._model.game?.players.includes(ourPlayer.id)? true : false
+    }
+    return false;
   }
 
   /**
@@ -153,12 +167,16 @@ export default class HangmanAreaController extends GameAreaController<
     const previousMistakes = this.mistakeCount;
     const previousTurn = this.isOurTurn;
     super._updateFrom(newModel);
+    const newState = newModel.game
     //TODO
-    if (previousMistakes < this.mistakeCount) {
-      this.emit('boardChange', this.mistakeCount);
-    }
-    if (this.isOurTurn !== previousTurn) {
-      this.emit('turnChanged', this.isOurTurn);
+    if (newState) {
+      if (previousMistakes < this.mistakeCount) {
+        this._guesses = [...newState.state.guesses]
+        this.emit('boardChange', this.mistakeCount);
+      }
+      if (this.isOurTurn !== previousTurn) {
+        this.emit('turnChanged', this.isOurTurn);
+      }
     }
   }
 
@@ -170,13 +188,13 @@ export default class HangmanAreaController extends GameAreaController<
    * @param letter the letter of the guess
    * @param word the word of the guess
    */
-  public async makeMove(letter: HangManLetters, word: string) {
+  public async makeMove(letter: HangManLetters | undefined, word: string | undefined) {
     if (!this.isActive || !this._instanceID) {
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     }
 
     const playerMove: HangManMove = {
-      playerID: this._townController.ourPlayer.id,
+      playerID: this._townController.ourPlayer?.id,
       wordGuess: word,
       letterGuess: letter,
     };
