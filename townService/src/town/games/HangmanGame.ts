@@ -63,7 +63,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     const findMove = this.allGuesses.find(letter => letter === move.move.letterGuess);
     // Find if any of the moves have that guess
     const findGuessWord = this.allGuesses.find(guessWord => guessWord === move.move.wordGuess);
-
+    // console.log(this.allGuesses);
+    // console.log(move.move.letterGuess);
     // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
     // means the move has not been attempted
     if (findMove !== undefined && findGuessWord !== undefined) {
@@ -90,6 +91,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
 
     // apply move after checking if the move is invalid
     this._validMove(move);
+    // console.log('AFTER APPLYING VALID MOVE')
+    // console.log(this.allGuesses)
   }
 
   /**
@@ -107,14 +110,16 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
       const { letterGuess } = player_move.move;
       // check if word contains that letter first
       if (this.state.word.includes(letterGuess)) {
+        // append to allGuesses if guessed correct letter
+        this.allGuesses.push(letterGuess);
+        // console.log('LETTER IS IN THE WORD');
+        // console.log(this.allGuesses);
         // add correct letter guess to currentGuess at the correct index
         for (let i = 0; i < this.state.word.length; i++) {
           if (this.state.word[i] === letterGuess) {
             this.state.currentGuess[i] = letterGuess;
           }
         }
-        // append to allGuesses if guessed correct letter
-        this.allGuesses.push(letterGuess);
         const winnersList = [];
         for (const play of this._players) {
           winnersList.push(play.id);
