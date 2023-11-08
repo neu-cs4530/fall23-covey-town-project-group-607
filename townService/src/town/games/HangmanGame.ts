@@ -58,11 +58,11 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
   public applyMove(move: GameMove<HangManMove>): void {
     // Find if any of the moves have the letter
     const findMove = this.state.guesses.find(
-      letter => letter.move.letterGuess === move.move.letterGuess,
+      letter => letter.letterGuess === move.move.letterGuess,
     );
     // Find if any of the moves have that guess
     const findGuessWord = this.state.guesses.find(
-      guessWord => guessWord.move.wordGuess === move.move.wordGuess,
+      guessWord => guessWord.wordGuess === move.move.wordGuess,
     );
 
     // If findMove or findGuessWord returns a word that means the move has already been made otherwise undefined
@@ -73,8 +73,10 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     // check if letterGuess and wordGuess is not given
     if (move.move.letterGuess === undefined && move.move.wordGuess === undefined) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
-    } // check if the game is IN_PROGRESS
-    else if (this.state.status !== 'IN_PROGRESS') {
+    }
+
+    // check if the game is IN_PROGRESS
+    if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
@@ -100,8 +102,8 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
    */
   private _validMove(player_move: GameMove<HangManMove>): void {
     // add move to the guesses list and update game status
-    const updatedGuesses = [...this.state.guesses, player_move];
-    const updatedMistakes = [...this.state.mistakes, player_move];
+    const updatedGuesses = [...this.state.guesses, player_move.move];
+    const updatedMistakes = [...this.state.mistakes, player_move.move];
 
     // if the move is given a letterGuess
     if (player_move.move.letterGuess) {

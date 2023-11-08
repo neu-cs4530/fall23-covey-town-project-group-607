@@ -28,8 +28,8 @@ export interface HangManMove {
 }
 
 export interface HangManGameState extends WinnableGameState {
-  guesses: ReadonlyArray<GameMove<HangManMove>>;
-  mistakes: ReadonlyArray<GameMove<HangManMove>>;
+  guesses: ReadonlyArray<HangManMove>;
+  mistakes: ReadonlyArray<HangManMove>;
   word: string;
   currentGuess: string[];
   player1?: PlayerID;
