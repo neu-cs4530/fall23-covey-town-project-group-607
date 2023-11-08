@@ -22,10 +22,10 @@ export default class HangmanAreaController extends GameAreaController<
   HangManGameState,
   HangManEvents
 > {
-  protected _guesses: HangManMove[] = []
+  protected _guesses: HangManMove[] = [];
 
   get guesses(): HangManMove[] {
-    return this._guesses
+    return this._guesses;
   }
 
   /**
@@ -111,9 +111,9 @@ export default class HangmanAreaController extends GameAreaController<
    * Returns true if the current player is a player in this game
    */
   get isPlayer(): boolean {
-    const ourPlayer = this._townController.ourPlayer
+    const ourPlayer = this._townController.ourPlayer;
     if (ourPlayer) {
-      return this._model.game?.players.includes(ourPlayer.id)? true : false
+      return this._model.game?.players.includes(ourPlayer.id) ? true : false;
     }
     return false;
   }
@@ -167,11 +167,11 @@ export default class HangmanAreaController extends GameAreaController<
     const previousMistakes = this.mistakeCount;
     const previousTurn = this.isOurTurn;
     super._updateFrom(newModel);
-    const newState = newModel.game
+    const newState = newModel.game;
     //TODO
     if (newState) {
       if (previousMistakes < this.mistakeCount) {
-        this._guesses = [...newState.state.guesses]
+        this._guesses = [...newState.state.guesses];
         this.emit('boardChange', this.mistakeCount);
       }
       if (this.isOurTurn !== previousTurn) {

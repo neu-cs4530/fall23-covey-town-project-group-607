@@ -3,7 +3,6 @@ import { mock } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import {
   GameArea,
-  GameMove,
   GameResult,
   GameStatus,
   HangManGameState,
@@ -14,7 +13,6 @@ import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import GameAreaController from './GameAreaController';
 import HangmanAreaController, { NO_GAME_IN_PROGRESS_ERROR } from './HangmanAreaController';
-import { words } from 'lodash';
 
 describe('[T1] HangmanAreaController', () => {
   const ourPlayer = new PlayerController(nanoid(), nanoid(), {
@@ -58,10 +56,10 @@ describe('[T1] HangmanAreaController', () => {
   }: {
     _id?: string;
     history?: GameResult[];
-    player1?: PlayerID,
-    player2?: PlayerID,
-    player3?: PlayerID,
-    player4?: PlayerID,
+    player1?: PlayerID;
+    player2?: PlayerID;
+    player3?: PlayerID;
+    player4?: PlayerID;
     undefinedGame?: boolean;
     status?: GameStatus;
     guesses?: ReadonlyArray<HangManMove>;
@@ -364,7 +362,7 @@ describe('[T1] HangmanAreaController', () => {
           player4: otherPlayers[2].id,
           winner: [otherPlayers[0].id, ourPlayer.id, otherPlayers[1].id, otherPlayers[2].id],
         });
-        const winners = [otherPlayers[0], ourPlayer, otherPlayers[1], otherPlayers[2]]
+        const winners = [otherPlayers[0], ourPlayer, otherPlayers[1], otherPlayers[2]];
         expect(controller.winner).toBe(winners);
       });
       it('should return undefined if there is no winner', () => {
@@ -407,7 +405,7 @@ describe('[T1] HangmanAreaController', () => {
           move: {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         });
       });
@@ -422,7 +420,7 @@ describe('[T1] HangmanAreaController', () => {
           player1: ourPlayer.id,
           player2: otherPlayers[0].id,
           player3: otherPlayers[1].id,
-          player4: otherPlayers[2].id
+          player4: otherPlayers[2].id,
         });
       });
       it('should emit a boardChanged event with the new board', () => {
@@ -431,12 +429,12 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
           {
             playerID: otherPlayers[0].id,
             letterGuess: 'p',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         ];
         assert(model.game);
@@ -454,8 +452,7 @@ describe('[T1] HangmanAreaController', () => {
         controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
         const guessesChangedCall = emitSpy.mock.calls.find(call => call[0] === 'boardChanged');
         expect(guessesChangedCall).toBeDefined();
-        if (guessesChangedCall)
-          expect(guessesChangedCall[1]).toEqual(['a', 'p', 'p','','']);
+        if (guessesChangedCall) expect(guessesChangedCall[1]).toEqual(['a', 'p', 'p', '', '']);
       });
       it('should emit a turnChanged event with true if it is our turn', () => {
         const model = controller.toInteractableAreaModel();
@@ -463,12 +460,12 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
           {
             playerID: otherPlayers[0].id,
             letterGuess: 'p',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         ];
         assert(model.game);
@@ -505,7 +502,7 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         ];
         expect(controller.isOurTurn).toBe(true);
@@ -543,12 +540,12 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
           {
             playerID: ourPlayer.id,
             letterGuess: 'p',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         ];
         const newModel: GameArea<HangManGameState> = {
@@ -567,12 +564,12 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
           {
             playerID: ourPlayer.id,
             letterGuess: 'p',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
         ];
 
@@ -597,12 +594,12 @@ describe('[T1] HangmanAreaController', () => {
           {
             playerID: ourPlayer.id,
             letterGuess: 'a',
-            wordGuess: undefined
+            wordGuess: undefined,
           },
           {
-              playerID: ourPlayer.id,
-              letterGuess: 'p',
-              wordGuess: undefined
+            playerID: ourPlayer.id,
+            letterGuess: 'p',
+            wordGuess: undefined,
           },
         ];
         assert(model.game);
