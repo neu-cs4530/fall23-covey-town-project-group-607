@@ -188,7 +188,7 @@ export default class HangmanAreaController extends GameAreaController<
    * @param letter the letter of the guess
    * @param word the word of the guess
    */
-  public async makeMove(letter: HangManLetters, word: string) {
+  public async makeMove(letter?: HangManLetters, word?: string) {
     if (!this.isActive || !this._instanceID) {
       throw new Error(NO_GAME_IN_PROGRESS_ERROR);
     }
