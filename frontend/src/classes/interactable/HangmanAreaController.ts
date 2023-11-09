@@ -63,6 +63,13 @@ export default class HangmanAreaController extends GameAreaController<
   }
 
   /**
+   * Gets an array of the letters that are guessed in the hangman game
+   */
+  get word() {
+    return this._model.game?.state.word;
+  }
+
+  /**
    * Returns the winner of the game, if there is one
    */
   get winner(): PlayerController[] | undefined {
