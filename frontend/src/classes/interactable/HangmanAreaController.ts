@@ -56,12 +56,23 @@ export default class HangmanAreaController extends GameAreaController<
   }
 
   /**
+   * Gets an array of the letters that are guessed in the hangman game
+   */
+  get currentGuess() {
+    return this._model.game?.state.currentGuess;
+  }
+
+  /**
    * Returns the winner of the game, if there is one
    */
-  get winner(): PlayerController | undefined {
+  get winner(): PlayerController[] | undefined {
     const winner = this._model.game?.state.winner;
+    const allWinners = [];
     if (winner) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === winner);
+      for (const player of winner) {
+        allWinners.push(this._townController.getPlayer(player));
+      }
+      return allWinners;
     }
     return undefined;
   }
@@ -110,7 +121,7 @@ export default class HangmanAreaController extends GameAreaController<
   get player1(): PlayerController | undefined {
     const player = this._model.game?.state.player1;
     if (player) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+      return this._townController.getPlayer(player);
     }
     return undefined;
   }
@@ -121,7 +132,7 @@ export default class HangmanAreaController extends GameAreaController<
   get player2(): PlayerController | undefined {
     const player = this._model.game?.state.player2;
     if (player) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+      return this._townController.getPlayer(player);
     }
     return undefined;
   }
@@ -132,7 +143,7 @@ export default class HangmanAreaController extends GameAreaController<
   get player3(): PlayerController | undefined {
     const player = this._model.game?.state.player3;
     if (player) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+      return this._townController.getPlayer(player);
     }
     return undefined;
   }
@@ -143,7 +154,7 @@ export default class HangmanAreaController extends GameAreaController<
   get player4(): PlayerController | undefined {
     const player = this._model.game?.state.player3;
     if (player) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+      return this._townController.getPlayer(player);
     }
     return undefined;
   }
