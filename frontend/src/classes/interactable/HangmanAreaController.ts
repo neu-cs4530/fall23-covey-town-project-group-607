@@ -14,7 +14,7 @@ export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
 export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
 
 export type HangManEvents = GameEventTypes & {
-  boardChanged: (board: HangManMove[]) => void;
+  boardChanged: (board: string[]) => void;
   turnChanged: (isOurTurn: boolean) => void;
 };
 
@@ -51,6 +51,13 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Gets the total amount of guesses in the game
    */
+  get guess() {
+    return this._model.game?.state.guesses;
+  }
+
+  /**
+   * Gets the total amount of guesses in the game
+   */
   get guessCount() {
     return this._model.game?.state.guesses.length || 0;
   }
@@ -59,7 +66,41 @@ export default class HangmanAreaController extends GameAreaController<
    * Gets an array of the letters that are guessed in the hangman game
    */
   get currentGuess() {
-    return this._model.game?.state.currentGuess;
+    const theWord = this._model.game?.state.word;
+
+    //Intializes the currentGuess array
+    const currentGuessArray = [];
+    if (theWord) {
+      for (let i = 0; i < theWord?.length; i++) {
+        currentGuessArray[i] = '';
+      }
+    }
+
+    // If the guessword === array then we fill all the letters
+    // If the letterword === some of the array we fill the letters
+    //Adds the letters to the array if guessed
+    if (this._model.game?.state.guesses) {
+      for (const guess of this._model.game.state.guesses) {
+        if (guess.letterGuess) {
+          if (theWord?.includes(guess.letterGuess)) {
+            for (let k = 0; k < theWord.length; k++) {
+              if (theWord[k] === guess.letterGuess) {
+                currentGuessArray[k] = guess.letterGuess;
+              }
+            }
+          }
+        }
+        if (guess.wordGuess) {
+          if (guess.wordGuess === theWord) {
+            for (let j = 0; j < theWord.length; j++) {
+              currentGuessArray[j] = theWord[j];
+            }
+          }
+        }
+      }
+      return currentGuessArray;
+    }
+    return currentGuessArray;
   }
 
   /**
@@ -159,7 +200,7 @@ export default class HangmanAreaController extends GameAreaController<
    * Returns the second player
    */
   get player4(): PlayerController | undefined {
-    const player = this._model.game?.state.player3;
+    const player = this._model.game?.state.player4;
     if (player) {
       return this._townController.getPlayer(player);
     }
@@ -168,16 +209,31 @@ export default class HangmanAreaController extends GameAreaController<
 
   protected _updateFrom(newModel: GameArea<HangManGameState>): void {
     //Initialize the past states fo the board
-    const previousMistakes = this.mistakeCount;
+    const currentGuess = this.currentGuess;
     const previousTurn = this.isOurTurn;
     super._updateFrom(newModel);
     //TODO
-    if (previousMistakes < this.mistakeCount) {
-      this.emit('boardChange', this.mistakeCount);
+    if (this._checkArrays(currentGuess, this.currentGuess)) {
+      this.emit('boardChanged', this.currentGuess);
     }
     if (this.isOurTurn !== previousTurn) {
       this.emit('turnChanged', this.isOurTurn);
     }
+  }
+
+  /**
+   * Helper function to check if the arrays are the same or not
+   * @param board1 The first board
+   * @param board2 The second board
+   * @returns true if there is a difference between the boards and false if the boards are the same.
+   */
+  private _checkArrays(board1: string[], board2: string[]): boolean {
+    for (let i = 0; i < board1.length; i++) {
+      if (board1[i] !== board2[i]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
