@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Button, Input, VStack, Text } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
-import { HangManLetters, HangManMove } from '../../../../types/CoveyTownSocket';
-import Hangman from './HangmanComponent'
+import { HangManLetters } from '../../../../types/CoveyTownSocket';
+import Hangman from './HangmanComponent';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -10,7 +10,7 @@ export type HangmanBoardProps = {
 
 export default function HangmanBoard({ gameAreaController }: HangmanBoardProps): JSX.Element {
   const [letterGuess, setLetterGuess] = useState('');
-  const [wordGuess, setWordGuess] = useState('');   
+  const [wordGuess, setWordGuess] = useState('');
 
   const handleLetterGuessSubmit = async () => {
     try {
@@ -32,42 +32,39 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
 
   return (
     <VStack spacing={4}>
-            <Hangman mistakeCount={gameAreaController.mistakeCount} />
-      <Text fontSize="xl">Current Guess: {gameAreaController.currentGuess.join(' ')}</Text>
-      <Text fontSize="xl">Mistakes: {gameAreaController.mistakeCount}</Text>
+      <Hangman mistakeCount={gameAreaController.mistakeCount} />
+      <Text fontSize='xl'>Current Guess: {gameAreaController.currentGuess.join(' ')}</Text>
+      <Text fontSize='xl'>Mistakes: {gameAreaController.mistakeCount}</Text>
 
       <Box>
-        <Input 
-          placeholder="Guess a letter" 
+        <Input
+          placeholder='Guess a letter'
           value={letterGuess}
-          onChange={(e) => setLetterGuess(e.target.value)}
+          onChange={e => setLetterGuess(e.target.value)}
           isDisabled={wordGuess !== ''}
         />
-        <Button 
-          colorScheme="blue" 
+        <Button
+          colorScheme='blue'
           onClick={handleLetterGuessSubmit}
-          isDisabled={letterGuess === '' || wordGuess !== ''}
-        >
+          isDisabled={letterGuess === '' || wordGuess !== ''}>
           Guess Letter
         </Button>
       </Box>
 
       <Box>
-        <Input 
-          placeholder="Guess the word" 
+        <Input
+          placeholder='Guess the word'
           value={wordGuess}
-          onChange={(e) => setWordGuess(e.target.value)}
+          onChange={e => setWordGuess(e.target.value)}
           isDisabled={letterGuess !== ''}
         />
-        <Button 
-          colorScheme="blue" 
+        <Button
+          colorScheme='blue'
           onClick={handleWordGuessSubmit}
-          isDisabled={wordGuess === '' || letterGuess !== ''}
-        >
+          isDisabled={wordGuess === '' || letterGuess !== ''}>
           Guess Word
         </Button>
       </Box>
     </VStack>
   );
 }
-
