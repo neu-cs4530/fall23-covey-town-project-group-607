@@ -108,8 +108,8 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   if (gameStatus === 'IN_PROGRESS') {
     gameStatusText = (
       <>
-        Game in progress, {guessCount} guesses in, {gameAreaController.maxMistakes - mistakes}{' '}
-        guesses left
+        {/* Game in progress, {guessCount} guesses in, {gameAreaController.maxMistakes - mistakes}{' '} */}
+        Game in progress, {guessCount} guesses in, {10 - mistakes} guesses left
       </>
     );
   } else {
