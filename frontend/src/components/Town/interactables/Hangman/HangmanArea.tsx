@@ -59,21 +59,21 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     }
   };
 
-  const handleLetterGuessSubmit = async () => {
+  const handleLetterGuess = async () => {
     try {
       await gameAreaController.makeMove(letterGuess as HangManLetters, '');
       setLetterGuess('');
     } catch (e) {
-      console.error('Error making letter guess:', e);
+      console.error('Unable to submit letter:', e);
     }
   };
 
-  const handleWordGuessSubmit = async () => {
+  const handleWordGuess = async () => {
     try {
       await gameAreaController.makeMove(letterGuess as HangManLetters, wordGuess); //fix
       setWordGuess('');
     } catch (e) {
-      console.error('Error making word guess:', e);
+      console.error('Unable to submit word:', e);
     }
   };
 
@@ -94,7 +94,12 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
-    gameStatusText = <>Game in progress, {guessCount} guesses in,  {gameAreaController.maxMistakes - mistakes} guesses left</>;
+    gameStatusText = (
+      <>
+        Game in progress, {guessCount} guesses in, {gameAreaController.maxMistakes - mistakes}{' '}
+        guesses left
+      </>
+    );
   } else {
     let joinGameButton = <></>;
     if (
@@ -130,52 +135,50 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   }
 
   return (
-    <VStack spacing={4}>
-      <Modal isOpen={isModalOpen} onClose={closeModal} closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{gameAreaController.name}</ModalHeader>
-          <ModalCloseButton />
-          <VStack spacing={4}>
-            {/* <Hangman mistakeCount={mistakes} /> */}
-            <div>
-              <h3>{mistakes}</h3>
-            </div>
-            <h1>Current Guess: {wordGuess.join(' ')}</h1>
-            <h1>Mistakes: {mistakes}</h1>
-            <h1>Mistakes: {gameAreaController.mistakeCount}</h1>
-            <Box>
-              <Input
-                placeholder='Guess a letter'
-                value={letterGuess}
-                onChange={e => setLetterGuess(e.target.value)}
-                isDisabled={wordGuess !== ''}
-              />
-              <Button
-                colorScheme='blue'
-                onClick={handleLetterGuessSubmit}
-                isDisabled={letterGuess === '' || wordGuess !== ''}>
-                Guess Letter
-              </Button>
-            </Box>
-            <Box>
-              <Input
-                placeholder='Guess the word'
-                value={wordGuess}
-                onChange={e => setWordGuess(e.target.value)}
-                isDisabled={letterGuess !== ''}
-              />
-              <Button
-                colorScheme='blue'
-                onClick={handleWordGuessSubmit}
-                isDisabled={wordGuess === '' || letterGuess !== ''}>
-                Guess Word
-              </Button>
-            </Box>
-          </VStack>
-        </ModalContent>
-      </Modal>
-    </VStack>
+    <Modal isOpen={isModalOpen} onClose={closeModal} closeOnOverlayClick={false}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{gameAreaController.name}</ModalHeader>
+        <ModalCloseButton />
+        <VStack spacing={4}>
+          {/* <Hangman mistakeCount={mistakes} /> */}
+          <div>
+            <h3>{mistakes}</h3>
+          </div>
+          <h1>Current Guess: {wordGuess.join(' ')}</h1>
+          <h1>Mistakes: {mistakes}</h1>
+          <h1>Mistakes: {gameAreaController.mistakeCount}</h1>
+          <Box>
+            <Input
+              placeholder='Guess a letter'
+              value={letterGuess}
+              onChange={e => setLetterGuess(e.target.value)}
+              isDisabled={wordGuess !== ''}
+            />
+            <Button
+              colorScheme='blue'
+              onClick={handleLetterGuess}
+              isDisabled={letterGuess === '' || wordGuess !== ''}>
+              Guess Letter
+            </Button>
+          </Box>
+          <Box>
+            <Input
+              placeholder='Guess the word'
+              value={wordGuess}
+              onChange={e => setWordGuess(e.target.value)}
+              isDisabled={letterGuess !== ''}
+            />
+            <Button
+              colorScheme='blue'
+              onClick={handleWordGuess}
+              isDisabled={wordGuess === '' || letterGuess !== ''}>
+              Guess Word
+            </Button>
+          </Box>
+        </VStack>
+      </ModalContent>
+    </Modal>
   );
 }
 
