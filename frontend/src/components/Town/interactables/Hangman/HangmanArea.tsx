@@ -6,9 +6,17 @@ import GameAreaInteractable from '../GameArea';
 import { GameStatus, HangManLetters, InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
-  Input,
+  Container,
+  Heading,
+  List,
+  ListItem,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -16,6 +24,10 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
+
+export type HangmanBoardProps = {
+  gameAreaController: HangmanAreaController;
+};
 
 function HangmanArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<HangmanAreaController>(interactableID);
@@ -138,45 +150,90 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     <Modal isOpen={isModalOpen} onClose={closeModal} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{gameAreaController.name}</ModalHeader>
+        <ModalHeader>{'HangMan Game'}</ModalHeader>
         <ModalCloseButton />
-        <VStack spacing={4}>
-          {/* <Hangman mistakeCount={mistakes} /> */}
-          <div>
-            <h3>{mistakes}</h3>
-          </div>
-          <h1>Current Guess: {wordGuess.join(' ')}</h1>
-          <h1>Mistakes: {mistakes}</h1>
-          <h1>Mistakes: {gameAreaController.mistakeCount}</h1>
-          <Box>
-            <Input
-              placeholder='Guess a letter'
-              value={letterGuess}
-              onChange={e => setLetterGuess(e.target.value)}
-              isDisabled={wordGuess !== ''}
-            />
-            <Button
-              colorScheme='blue'
-              onClick={handleLetterGuess}
-              isDisabled={letterGuess === '' || wordGuess !== ''}>
-              Guess Letter
-            </Button>
-          </Box>
-          <Box>
-            <Input
-              placeholder='Guess the word'
-              value={wordGuess}
-              onChange={e => setWordGuess(e.target.value)}
-              isDisabled={letterGuess !== ''}
-            />
-            <Button
-              colorScheme='blue'
-              onClick={handleWordGuess}
-              isDisabled={wordGuess === '' || letterGuess !== ''}>
-              Guess Word
-            </Button>
-          </Box>
-        </VStack>
+        <Container>
+          <Accordion allowToggle>
+            <AccordionItem>
+              <Heading as='h3'>
+                <AccordionButton>
+                  <Box as='span' flex='1' textAlign='left'>
+                    Leaderboard
+                    <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+              </Heading>
+              <AccordionPanel>{/* Will add Hangman leaderboard component here */}</AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+              <Heading as='h3'>
+                <AccordionButton>
+                  <Box as='span' flex='1' textAlign='left'>
+                    Current Observers
+                    <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+              </Heading>
+              <AccordionPanel>
+                <List aria-label='list of observers in the game'>
+                  {gameAreaController.observers.map(player => {
+                    return <ListItem key={player.id}>{player.userName}</ListItem>;
+                  })}
+                </List>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          {gameStatusText}
+          <List aria-label='list of players in the game'>
+            <ListItem>Players: {/* I dont know if we are adding players names */}</ListItem>
+            {gameAreaController.players.map((player, index) => {
+              return (
+                <ListItem key={player.id}>
+                  {index === 0 ? 'Player 1: ' : 'Player 2: '}
+                  {player.userName || '(No player yet!)'}
+                </ListItem>
+              );
+            })}
+          </List>
+          {/* Will add Hangman leaderboard component here */}
+          <VStack spacing={4}>
+            <div>
+              <h3>{mistakes}</h3>
+            </div>
+            {/* render an h1 element withthe characters in the wordGuess string, separated by spaces, then join them back as a string. */}
+            <h1>Current Guess: {wordGuess.split('').join(' ')}</h1>
+            <h1>Mistakes: {mistakes}</h1>
+            <Box>
+              <input
+                placeholder='Guess a letter'
+                value={letterGuess}
+                onChange={e => setLetterGuess(e.target.value)}
+                disabled={wordGuess !== '' || gameStatus !== 'IN_PROGRESS'}
+              />
+              <Button
+                colorScheme='green'
+                onClick={handleLetterGuess}
+                disabled={letterGuess === '' || wordGuess !== '' || gameStatus !== 'IN_PROGRESS'}>
+                Guess Letter
+              </Button>
+            </Box>
+            <Box>
+              <input
+                placeholder='Guess the word'
+                value={wordGuess}
+                onChange={e => setWordGuess(e.target.value)}
+                disabled={letterGuess !== ''}
+              />
+              <Button
+                colorScheme='blue'
+                onClick={handleWordGuess}
+                disabled={wordGuess === '' || letterGuess !== ''}>
+                Guess Word
+              </Button>
+            </Box>
+          </VStack>
+          {/* <HangmanBoard gameAreaController={gameAreaController} /> */}
+        </Container>
       </ModalContent>
     </Modal>
   );
@@ -201,14 +258,14 @@ export default function HangmanAreaWrapper(): JSX.Element {
 
   if (gameArea && gameArea.getData('type') === 'Hangman') {
     return (
-      <react.Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
-        <react.ModalOverlay />
-        <react.ModalContent>
-          <react.ModalHeader>{gameArea.name}</react.ModalHeader>
+      <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{gameArea.name}</ModalHeader>
           <react.ModalCloseButton />
           <HangmanArea interactableID={gameArea.name} />;
-        </react.ModalContent>
-      </react.Modal>
+        </ModalContent>
+      </Modal>
     );
   }
   return <></>;
