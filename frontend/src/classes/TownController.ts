@@ -26,9 +26,15 @@ import {
   TownSettingsUpdate,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
-import { isConversationArea, isTicTacToeArea, isViewingArea } from '../types/TypeUtils';
+import {
+  isConversationArea,
+  isHangmanArea,
+  isTicTacToeArea,
+  isViewingArea,
+} from '../types/TypeUtils';
 import ConversationAreaController from './interactable/ConversationAreaController';
 import GameAreaController, { GameEventTypes } from './interactable/GameAreaController';
+import HangmanAreaController from './interactable/HangmanAreaController';
 import InteractableAreaController, {
   BaseInteractableEventMap,
 } from './interactable/InteractableAreaController';
@@ -604,6 +610,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           } else if (isTicTacToeArea(eachInteractable)) {
             this._interactableControllers.push(
               new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
+            );
+          } else if (isHangmanArea(eachInteractable)) {
+            this._interactableControllers.push(
+              new HangmanAreaController(eachInteractable.id, eachInteractable, this),
             );
           }
         });
