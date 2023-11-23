@@ -21,11 +21,15 @@ export default function GameAreaFactory(
   }
   const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
   const gameType = mapObject.properties?.find(prop => prop.name === 'type')?.value;
+
   if (gameType === 'TicTacToe') {
-    return new TicTacToeGameArea(name, rect, broadcastEmitter);
-  }
-  if (gameType === 'Hangman') {
     return new HangmanGameArea(name, rect, broadcastEmitter);
   }
+
+  if (gameType === 'Hangman') {
+    console.log('IT WORKS');
+    return new TicTacToeGameArea(name, rect, broadcastEmitter);
+  }
+
   throw new Error(`Unknown game area type ${mapObject.class}`);
 }

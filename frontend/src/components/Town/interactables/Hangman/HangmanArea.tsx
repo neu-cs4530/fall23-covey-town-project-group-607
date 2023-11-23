@@ -56,7 +56,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
         description: 'Game ended in a tie',
         status: 'info',
       });
-    } else if (winner === townController.ourPlayer) {
+    } else if (winner) {
       toast({
         title: 'Game over',
         description: 'You won!',
@@ -262,7 +262,7 @@ export default function HangmanAreaWrapper(): JSX.Element {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{gameArea.name}</ModalHeader>
-          <react.ModalCloseButton />
+          <ModalCloseButton />
           <HangmanArea interactableID={gameArea.name} />;
         </ModalContent>
       </Modal>
