@@ -27,7 +27,6 @@ export default function GameAreaFactory(
   }
 
   if (gameType === 'Hangman') {
-    console.log('IT WORKS');
     return new TicTacToeGameArea(name, rect, broadcastEmitter);
   }
 
