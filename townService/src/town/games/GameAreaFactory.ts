@@ -23,11 +23,11 @@ export default function GameAreaFactory(
   const gameType = mapObject.properties?.find(prop => prop.name === 'type')?.value;
 
   if (gameType === 'TicTacToe') {
-    return new HangmanGameArea(name, rect, broadcastEmitter);
+    return new TicTacToeGameArea(name, rect, broadcastEmitter);
   }
 
   if (gameType === 'Hangman') {
-    return new TicTacToeGameArea(name, rect, broadcastEmitter);
+    return new HangmanGameArea(name, rect, broadcastEmitter);
   }
 
   throw new Error(`Unknown game area type ${mapObject.class}`);
