@@ -46,7 +46,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   //const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   //const [isModalOpen, setIsModalOpen] = useState(true);
   const [joiningGame, setJoiningGame] = useState(false);
-  const toast = useToast();
+
 
   useEffect(() => {
     // Update guess count and game status when the gameAreaController changes
@@ -274,7 +274,7 @@ export default function HangmanAreaWrapper(): JSX.Element {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{gameArea.name}</ModalHeader>
-          <react.ModalCloseButton />
+          <ModalCloseButton />
           <HangmanArea interactableID={gameArea.name} />;
         </ModalContent>
       </Modal>
