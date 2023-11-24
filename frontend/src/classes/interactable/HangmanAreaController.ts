@@ -186,7 +186,7 @@ export default class HangmanAreaController extends GameAreaController<
   }
 
   /**
-   * Returns the second player
+   * Returns the third player
    */
   get player3(): PlayerController | undefined {
     const player = this._model.game?.state.player3;
@@ -197,7 +197,7 @@ export default class HangmanAreaController extends GameAreaController<
   }
 
   /**
-   * Returns the second player
+   * Returns the fourth player
    */
   get player4(): PlayerController | undefined {
     const player = this._model.game?.state.player4;
