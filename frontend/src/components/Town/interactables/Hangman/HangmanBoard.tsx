@@ -1,7 +1,8 @@
-
+import { VStack, Heading, Button, Input, Box, Text } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { HangManLetters } from '../../../../types/CoveyTownSocket';
 import Hangman from './HangmanComponent';
+import React, { useEffect, useState } from 'react';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;

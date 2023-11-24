@@ -1,9 +1,8 @@
-import * as react from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import GameAreaInteractable from '../GameArea';
-import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import {
   Accordion,
@@ -18,14 +17,16 @@ import {
   List,
   ListItem,
   Modal,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  VStack,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
 import PlayerController from '../../../../classes/PlayerController';
 import HangmanBoard from './HangmanBoard';
+import Leaderboard from '../Leaderboard';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -34,6 +35,7 @@ export type HangmanBoardProps = {
 function HangmanArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<HangmanAreaController>(interactableID);
   const townController = useTownController();
+  const toast = useToast();
 
   const [mistakes, setMistakes] = useState<number>(gameAreaController.mistakeCount);
   const [guessCount, setGuessCount] = useState<number>(gameAreaController.guessCount);
@@ -43,10 +45,9 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
   const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
-  //const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
+  const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   //const [isModalOpen, setIsModalOpen] = useState(true);
   const [joiningGame, setJoiningGame] = useState(false);
-
 
   useEffect(() => {
     // Update guess count and game status when the gameAreaController changes
@@ -60,6 +61,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
       setPlayer3(gameAreaController.player3);
       setPlayer4(gameAreaController.player4);
       setObservers(gameAreaController.observers);
+      setHistory(gameAreaController.history);
     };
 
     gameAreaController.addListener('gameUpdated', updateGameState);
@@ -169,8 +171,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
             </AccordionButton>
           </Heading>
           <AccordionPanel>
-            {/* <TicTacToeLeaderboard results={history} /> */}{' '}
-            {/* Will add Hangman leaderboard component here */}
+            <Leaderboard results={history} /> {/* Will add Hangman leaderboard component here */}
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
