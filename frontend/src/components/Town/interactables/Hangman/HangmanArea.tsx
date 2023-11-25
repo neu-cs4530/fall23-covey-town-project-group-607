@@ -1,8 +1,9 @@
+import * as react from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import GameAreaInteractable from '../GameArea';
-import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import {
   Accordion,
@@ -21,12 +22,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useToast,
-  VStack,
 } from '@chakra-ui/react';
-import PlayerController from '../../../../classes/PlayerController';
 import HangmanBoard from './HangmanBoard';
-import Leaderboard from '../Leaderboard';
+import HangmanComponent from './HangmanComponent';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -35,96 +33,73 @@ export type HangmanBoardProps = {
 function HangmanArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<HangmanAreaController>(interactableID);
   const townController = useTownController();
-  const toast = useToast();
-
-  const [mistakes, setMistakes] = useState<number>(gameAreaController.mistakeCount);
-  const [guessCount, setGuessCount] = useState<number>(gameAreaController.guessCount);
-  const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-  const [player1, setPlayer1] = useState<PlayerController | undefined>(gameAreaController.player1);
-  const [player2, setPlayer2] = useState<PlayerController | undefined>(gameAreaController.player2);
-  const [player3, setPlayer3] = useState<PlayerController | undefined>(gameAreaController.player3);
-  const [player4, setPlayer4] = useState<PlayerController | undefined>(gameAreaController.player4);
-  const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
-  const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
-  //const [isModalOpen, setIsModalOpen] = useState(true);
+  const [mistakes, setMistakes] = useState(gameAreaController.mistakeCount);
+  const [gameStatus, setGameStatus] = useState(gameAreaController.status);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const [joiningGame, setJoiningGame] = useState(false);
+  const [player1, setPlayer1] = useState(gameAreaController.player1);
+  const [player2, setPlayer2] = useState(gameAreaController.player2);
+  const [player3, setPlayer3] = useState(gameAreaController.player3);
+  const [player4, setPlayer4] = useState(gameAreaController.player4);
+  const [whoseTurn, setWhoseTurn] = useState(gameAreaController.whoseTurn);
+  const [word, setWord] = useState(gameAreaController.word);
+  const [winner, setWinner] = useState(gameAreaController.winner);
+  const [stateCurrentGuess, setStateCurrentGuess] = useState(gameAreaController.stateCurrentGuess);
+  const toast = react.useToast();
+
+  // Handle all the game updates
+  const handleGameUpdate = () => {
+    setMistakes(gameAreaController.mistakeCount);
+    setGameStatus(gameAreaController.status);
+    setPlayer1(gameAreaController.player1);
+    setPlayer2(gameAreaController.player2);
+    setPlayer3(gameAreaController.player3);
+    setPlayer4(gameAreaController.player4);
+    setWhoseTurn(gameAreaController.whoseTurn);
+    setWord(gameAreaController.word);
+    setWinner(gameAreaController.winner);
+    setMistakes(gameAreaController.mistakeCount);
+    setStateCurrentGuess(gameAreaController.stateCurrentGuess);
+  };
+
+  const handleGameEnd = () => {
+    if (winner === undefined) {
+      toast({
+        description: 'You lost',
+      });
+    }
+    if (winner?.includes(townController.ourPlayer)) {
+      toast({
+        description: 'You won!',
+      });
+    }
+  };
 
   useEffect(() => {
-    // Update guess count and game status when the gameAreaController changes
-    // Handle all the game updates
-    const updateGameState = () => {
-      setGuessCount(gameAreaController.guessCount);
-      setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setMistakes(gameAreaController.mistakeCount);
-      setPlayer1(gameAreaController.player1);
-      setPlayer2(gameAreaController.player2);
-      setPlayer3(gameAreaController.player3);
-      setPlayer4(gameAreaController.player4);
-      setObservers(gameAreaController.observers);
-      setHistory(gameAreaController.history);
-    };
-
-    gameAreaController.addListener('gameUpdated', updateGameState);
-
-    const handleGameEnd = () => {
-      setMistakes(gameAreaController.mistakeCount);
-      const winners = gameAreaController.winner;
-      if (!winners || winners.length === 0) {
-        toast({
-          title: 'Game over',
-          description: 'Game ended in a tie',
-          status: 'info',
-        });
-      } else {
-        const ourPlayerId = townController.ourPlayer.id;
-        if (winners.some(player => player.id === ourPlayerId)) {
-          toast({
-            title: 'Game over',
-            description: 'You are one of the winners!',
-            status: 'success',
-          });
-        } else {
-          toast({
-            title: 'Game over',
-            description: `You lost :(`,
-            status: 'error',
-          });
-        }
-        // Display all winners
-        const winnerNames = winners.map(winner => winner.userName || `(Player ${winner.id})`);
-        toast({
-          title: 'Winners',
-          description: `Winners: ${winnerNames.join(', ')}`,
-          status: 'success',
-        });
-      }
-    };
+    gameAreaController.addListener('gameUpdated', handleGameUpdate);
     gameAreaController.addListener('gameEnd', handleGameEnd);
+
     return () => {
-      gameAreaController.removeListener('gameUpdated', updateGameState);
+      gameAreaController.removeListener('gameUpdated', handleGameUpdate);
       gameAreaController.removeListener('gameEnd', handleGameEnd);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [townController, gameAreaController, toast]);
 
-  // const closeModal = () => {
-  //   setIsModalOpen(false);
-  // };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
     gameStatusText = (
       <>
-        Game in progress, {guessCount} guesses in, {10 - mistakes} guesses left, currently{' '}
-        {gameAreaController.whoseTurn === townController.ourPlayer
-          ? 'your'
-          : gameAreaController.whoseTurn?.userName + "'s"}{' '}
-        turn
+        {/* Game in progress, {guessCount} guesses in, {gameAreaController.maxMistakes - mistakes}{' '} */}
+        Game Status: Game in progress
       </>
     );
   } else {
     let joinGameButton = <></>;
-    // Check if the game is waiting to start and the current player is not in the game,
-    // or if the game is over
     if (
       (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
       gameAreaController.status === 'OVER'
@@ -158,97 +133,79 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   }
 
   return (
-    <Container>
-      {/* <ModalHeader>{'HangMan Game'}</ModalHeader> */}
-      <Accordion allowToggle>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
-                Leaderboard
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </Heading>
-          <AccordionPanel>
-            <Leaderboard results={history} /> {/* Will add Hangman leaderboard component here */}
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
-                Current Observers
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </Heading>
-          <AccordionPanel>
-            <List aria-label='list of observers in the game'>
-              {observers.map(player => {
-                return <ListItem key={player.id}>{player.userName}</ListItem>;
-              })}
-            </List>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
-      {gameStatusText}
-      <List aria-label='list of players in the game'>
-        <ListItem>Player 1: {player1?.userName || '(No player yet!)'}</ListItem>
-        <ListItem>Player 2: {player2?.userName || '(No player yet!)'}</ListItem>
-        <ListItem>Player 3: {player3?.userName || '(No player yet!)'}</ListItem>
-        <ListItem>Player 4: {player4?.userName || '(No player yet!)'}</ListItem>
-        {gameAreaController.players.map((player, index) => {
-          return (
-            <ListItem key={player.id}>
-              {index === 0 ? 'Player 1: ' : 'Player 2: '}
-              {player.userName || '(No player yet!)'}
-            </ListItem>
-          );
-        })}
-      </List>
-      <VStack>
-        <Box>
-          <Heading as='h1'>Hangman</Heading>
-          <p>{gameStatusText}</p>
-        </Box>
-        <Box>
-          <Heading as='h3'>Word</Heading>
-          <p>
-            {gameAreaController.word?.split('').map((letter, index) => (
-              <span key={index}>
-                {gameAreaController.currentGuess.includes(letter) ? letter : ' _ '}
-              </span>
-            ))}
-          </p>
-        </Box>
-        <Box>
-          <Heading as='h3'>Mistakes</Heading>
-          <p>{gameAreaController.mistakeCount}</p>
-        </Box>
-        <Box>
-          <Heading as='h3'>Guesses Left</Heading>
-          <p>{10 - mistakes}</p>
-        </Box>
-        <Box>
-          <Heading as='h3'>Letters Guessed</Heading>
-          <List>
-            {gameAreaController.currentGuess.map((letter, index) => (
-              <ListItem key={index}>{letter}</ListItem>
-            ))}
+    <Modal isOpen={isModalOpen} onClose={closeModal} closeOnOverlayClick={false}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{'HangMan Game'}</ModalHeader>
+        <ModalCloseButton />
+        <Container>
+          <Accordion allowToggle>
+            <AccordionItem>
+              <Heading as='h3'>
+                <AccordionButton>
+                  <Box as='span' flex='1' textAlign='left'>
+                    Leaderboard
+                    <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+              </Heading>
+              <AccordionPanel>{/* Will add Hangman leaderboard component here */}</AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+              <Heading as='h3'>
+                <AccordionButton>
+                  <Box as='span' flex='1' textAlign='left'>
+                    Current Observers
+                    <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+              </Heading>
+              <AccordionPanel>
+                <List aria-label='list of observers in the game'>
+                  {gameAreaController.observers.map(player => {
+                    return <ListItem key={player.id}>{player.userName}</ListItem>;
+                  })}
+                </List>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          {gameStatusText}
+          <List aria-label='list of players in the game'>
+            {player1?.userName ? (
+              <ListItem>Player1: {player1.userName}</ListItem>
+            ) : (
+              <ListItem>Player1: (No player yet!)</ListItem>
+            )}
+            {player2?.userName ? (
+              <ListItem>Player2: {player2.userName}</ListItem>
+            ) : (
+              <ListItem>Player2: (No player yet!)</ListItem>
+            )}
+            {player3?.userName ? (
+              <ListItem>Player3: {player3.userName}</ListItem>
+            ) : (
+              <ListItem>Player3: (No player yet!)</ListItem>
+            )}
+            {player4?.userName ? (
+              <ListItem>Player4: {player4.userName}</ListItem>
+            ) : (
+              <ListItem>Player4: (No player yet!)</ListItem>
+            )}
           </List>
-        </Box>
-      </VStack>
-      <VStack spacing={4}>
-        <div>
-          <h3>{mistakes}</h3>
-        </div>
-        {/* render an h1 element with the characters in the wordGuess string, separated by spaces, then join them back as a string. */}
-        {/* <h1>Current Guess: {wordGuess.split('').join(' ')}</h1> */}
-        <h1>Mistakes: {mistakes}</h1>
-      </VStack>
-      <HangmanBoard gameAreaController={gameAreaController} />
-    </Container>
+          {whoseTurn?.userName ? (
+            <p>CurrentTurn: {whoseTurn.userName}</p>
+          ) : (
+            <p>CurrentTurn: No one</p>
+          )}
+          <p>Total Mistakes: {mistakes}</p>
+          <p>{word}</p>
+          <p>CurrentGuess:{stateCurrentGuess?.length}</p>
+          {/* <p>Winner:{winner}</p> */}
+          <HangmanComponent mistakeCount={mistakes} />
+          <HangmanBoard gameAreaController={gameAreaController} />
+        </Container>
+      </ModalContent>
+    </Modal>
   );
 }
 

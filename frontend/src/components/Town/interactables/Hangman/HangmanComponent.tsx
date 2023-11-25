@@ -5,7 +5,7 @@ export type HangmanProps = {
   mistakeCount: number;
 };
 
-const Hangman: React.FC<HangmanProps> = ({ mistakeCount }) => {
+const HangmanComponent: React.FC<HangmanProps> = ({ mistakeCount }) => {
   return (
     <VStack spacing={2}>
       {/* Ground Base */}
@@ -74,4 +74,4 @@ const Hangman: React.FC<HangmanProps> = ({ mistakeCount }) => {
   );
 };
 
-export default Hangman;
+export default HangmanComponent;

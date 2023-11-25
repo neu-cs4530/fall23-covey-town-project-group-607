@@ -51,23 +51,22 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Gets the total amount of guesses in the game
    */
-  get guess() {
-    return this._model.game?.state.guesses;
-  }
-
-  /**
-   * Gets the total amount of guesses in the game
-   */
   get guessCount() {
     return this._model.game?.state.guesses.length || 0;
   }
 
   /**
-   * Gets an array of the letters that are guessed in the hangman game
+   * Gets the field CurrentGuess from the model
+   */
+  get stateCurrentGuess() {
+    return this._model.game?.state.currentGuess;
+  }
+
+  /**
+   * CurrentGuess of the controller
    */
   get currentGuess() {
     const theWord = this._model.game?.state.word;
-
     //Intializes the currentGuess array
     const currentGuessArray = [];
     if (theWord) {
@@ -102,6 +101,47 @@ export default class HangmanAreaController extends GameAreaController<
     }
     return currentGuessArray;
   }
+  /**
+   * Gets an array of the letters that are guessed correctly in the hangman game
+   */
+  // get currentGuess() {
+  //   const theWord = this.word;
+  //   //Intializes the currentGuess array
+  //   const currentGuessArray = this._model.game?.state.currentGuess;
+  //   if (theWord && currentGuessArray) {
+  //     for (let i = 0; i < theWord?.length; i++) {
+  //       currentGuessArray[i] = '';
+  //     }
+  //   } else {
+  //     return [];
+  //   }
+
+  //   // If the guessword === array then we fill all the letters
+  //   // If the letterword === some of the array we fill the letters
+  //   //Adds the letters to the array if guessed
+  //   if (this._model.game?.state.guesses && currentGuessArray) {
+  //     for (const guess of this._model.game.state.guesses) {
+  //       if (guess.letterGuess) {
+  //         if (theWord?.includes(guess.letterGuess)) {
+  //           for (let k = 0; k < theWord.length; k++) {
+  //             if (theWord[k] === guess.letterGuess) {
+  //               currentGuessArray[k] = guess.letterGuess;
+  //             }
+  //           }
+  //         }
+  //       }
+  //       if (guess.wordGuess) {
+  //         if (guess.wordGuess === theWord) {
+  //           for (let j = 0; j < theWord.length; j++) {
+  //             currentGuessArray[j] = theWord[j];
+  //           }
+  //         }
+  //       }
+  //     }
+  //     return currentGuessArray;
+  //   }
+  //   return currentGuessArray;
+  // }
 
   /**
    * Gets an array of the letters that are guessed in the hangman game

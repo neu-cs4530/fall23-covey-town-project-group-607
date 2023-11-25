@@ -583,6 +583,16 @@ describe('[T1] HangmanAreaController', () => {
             letterGuess: 'p',
             wordGuess: undefined,
           },
+          {
+            playerID: ourPlayer.id,
+            letterGuess: 'l',
+            wordGuess: undefined,
+          },
+          {
+            playerID: ourPlayer.id,
+            letterGuess: 'e',
+            wordGuess: undefined,
+          },
         ];
         assert(model.game);
         const newModel: GameArea<HangManGameState> = {
@@ -592,11 +602,12 @@ describe('[T1] HangmanAreaController', () => {
             state: {
               ...model.game?.state,
               guesses: newMoves,
+              currentGuess: ['a', 'p', 'p', 'l', 'e'],
             },
           },
         };
         controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
-        expect(controller.currentGuess).toEqual(['a', 'p', 'p', '', '']);
+        expect(controller.currentGuess).toEqual(['a', 'p', 'p', 'l', 'e']);
       });
     });
   });
