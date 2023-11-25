@@ -88,13 +88,11 @@ const HangmanComponent: React.FC<HangmanProps> = ({ mistakeCount }) => {
             <Text fontSize='2xl'>/</Text>
           </Box>
         )}
-        {
-          (mistakeCount = 10 && (
-            <Box position='absolute' left='30px' top='50px'>
-              <Text fontSize='2xl'>\</Text>
-            </Box>
-          ))
-        }
+        {mistakeCount >= 10 && (
+          <Box position='absolute' left='30px' top='50px'>
+            <Text fontSize='2xl'>\</Text>
+          </Box>
+        )}
       </Box>
     </VStack>
   );
