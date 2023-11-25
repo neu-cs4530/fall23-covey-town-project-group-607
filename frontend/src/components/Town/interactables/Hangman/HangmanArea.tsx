@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import GameAreaInteractable from '../GameArea';
-import { GameStatus, HangManLetters, InteractableID } from '../../../../types/CoveyTownSocket';
+import { InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import {
   Accordion,
@@ -22,7 +22,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  VStack,
 } from '@chakra-ui/react';
 import HangmanBoard from './HangmanBoard';
 import HangmanComponent from './HangmanComponent';

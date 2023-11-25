@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Input, VStack, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Input, VStack, Text } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { HangManLetters } from '../../../../types/CoveyTownSocket';
-import Hangman from './HangmanComponent';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -12,12 +11,11 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
   const [letterGuess, setLetterGuess] = useState('');
   const [wordGuess, setWordGuess] = useState('');
   const [displayedWord, setDisplayedWord] = useState('');
-  const [guessesSoFar, setGuessesSoFar] = useState('');
+  // const [guessesSoFar, setGuessesSoFar] = useState('');
   const [isOurTurn, setIsOurTurn] = useState(gameAreaController.isOurTurn);
   const [currentGuess, setCurrentGuess] = useState(gameAreaController.currentGuess);
   const [occupants, setOccupants] = useState(gameAreaController.occupants);
-  const [word, setWord] = useState(gameAreaController.word);
-  const toast = useToast();
+  // const toast = useToast();
 
   useEffect(() => {
     const handleBoardChanged = () => {
@@ -38,6 +36,7 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
       gameAreaController.removeListener('boardChanged', handleBoardChanged);
       gameAreaController.removeListener('turnChanged', handleTurnChanged);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [HangmanBoard]);
 
   const handleLetterGuessSubmit = async () => {
