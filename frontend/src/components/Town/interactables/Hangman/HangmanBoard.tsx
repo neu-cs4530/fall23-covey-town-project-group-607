@@ -13,30 +13,33 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
   const [displayedWord, setDisplayedWord] = useState('');
   // const [guessesSoFar, setGuessesSoFar] = useState('');
   const [isOurTurn, setIsOurTurn] = useState(gameAreaController.isOurTurn);
-  const [currentGuess, setCurrentGuess] = useState(gameAreaController.currentGuess);
-  const [occupants, setOccupants] = useState(gameAreaController.occupants);
+  const [occupants] = useState(gameAreaController.occupants);
   // const toast = useToast();
 
   useEffect(() => {
     const handleBoardChanged = () => {
-      setCurrentGuess(gameAreaController.currentGuess);
-      setOccupants(gameAreaController.occupants);
+      // Directly use gameAreaController.currentGuess to update displayedWord
+      const newDisplayedWord = gameAreaController.currentGuess
+        .map(letter => letter || '_ ')
+        .join('');
+      setDisplayedWord(newDisplayedWord);
     };
 
     const handleTurnChanged = () => {
       setIsOurTurn(gameAreaController.isOurTurn);
     };
-    // Update the displayed word when the current guess changes
-    const newDisplayedWord = currentGuess?.map(letter => letter || '_ ').join('');
-    setDisplayedWord(newDisplayedWord);
+
     gameAreaController.addListener('boardChanged', handleBoardChanged);
     gameAreaController.addListener('turnChanged', handleTurnChanged);
+
+    // Initial update for displayedWord
+    handleBoardChanged();
+
     return () => {
       gameAreaController.removeListener('boardChanged', handleBoardChanged);
       gameAreaController.removeListener('turnChanged', handleTurnChanged);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [HangmanBoard]);
+  }, [gameAreaController]);
 
   const handleLetterGuessSubmit = async () => {
     try {
