@@ -43,7 +43,6 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   const [player4, setPlayer4] = useState(gameAreaController.player4);
   const [whoseTurn, setWhoseTurn] = useState(gameAreaController.whoseTurn);
   const [word, setWord] = useState(gameAreaController.word);
-  const [winner, setWinner] = useState(gameAreaController.winner);
   const [stateCurrentGuess, setStateCurrentGuess] = useState(gameAreaController.stateCurrentGuess);
   const toast = react.useToast();
 
@@ -57,12 +56,12 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     setPlayer4(gameAreaController.player4);
     setWhoseTurn(gameAreaController.whoseTurn);
     setWord(gameAreaController.word);
-    setWinner(gameAreaController.winner);
     setMistakes(gameAreaController.mistakeCount);
     setStateCurrentGuess(gameAreaController.stateCurrentGuess);
   };
 
   const handleGameEnd = () => {
+    const winner = gameAreaController.winner;
     if (winner === undefined) {
       toast({
         description: 'You lost',
