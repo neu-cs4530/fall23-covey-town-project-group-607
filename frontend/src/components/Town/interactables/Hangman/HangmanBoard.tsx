@@ -50,7 +50,7 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
 
   const handleWordGuessSubmit = async () => {
     try {
-      await gameAreaController.makeMove(wordGuess as HangManLetters);
+      await gameAreaController.makeMove(undefined, wordGuess);
       setWordGuess('');
       gameAreaController.updateFrom(gameAreaController.toInteractableAreaModel(), occupants);
     } catch (e) {
