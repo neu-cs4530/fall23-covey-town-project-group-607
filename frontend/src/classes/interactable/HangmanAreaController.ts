@@ -67,7 +67,6 @@ export default class HangmanAreaController extends GameAreaController<
    */
   get currentGuess() {
     const theWord = this._model.game?.state.word;
-
     //Intializes the currentGuess array
     const currentGuessArray = [];
     if (theWord) {
@@ -251,13 +250,8 @@ export default class HangmanAreaController extends GameAreaController<
   protected _updateFrom(newModel: GameArea<HangManGameState>): void {
     //Initialize the past states fo the board
     const currentGuess = this.currentGuess;
-    const currentGuess1 = this.currentGuess;
     const previousTurn = this.isOurTurn;
-    console.log(currentGuess);
     super._updateFrom(newModel);
-    console.log(this.currentGuess);
-    console.log(currentGuess);
-    console.log(currentGuess1);
     //TODO
     if (this._checkArrays(currentGuess, this.currentGuess)) {
       this.emit('boardChanged', this.currentGuess);

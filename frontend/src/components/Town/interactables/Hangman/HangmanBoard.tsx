@@ -21,7 +21,6 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
     const handleBoardChanged = () => {
       setCurrentGuess(gameAreaController.currentGuess);
       setOccupants(gameAreaController.occupants);
-      setWord(gameAreaController.word);
     };
 
     const handleTurnChanged = () => {
