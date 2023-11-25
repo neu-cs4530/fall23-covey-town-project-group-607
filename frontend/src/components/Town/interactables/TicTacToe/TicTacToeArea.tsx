@@ -106,8 +106,8 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
     };
     gameAreaController.addListener('gameEnd', onGameEnd);
     return () => {
-      gameAreaController.removeListener('gameEnd', onGameEnd);
       gameAreaController.removeListener('gameUpdated', updateGameState);
+      gameAreaController.removeListener('gameEnd', onGameEnd);
     };
   }, [townController, gameAreaController, toast]);
 

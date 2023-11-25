@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Input, VStack, Text } from '@chakra-ui/react';
+import { VStack, Heading, Button, Input, Box, Text } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { HangManLetters } from '../../../../types/CoveyTownSocket';
+
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -59,14 +59,52 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
     }
   };
 
+  // const handleLetterGuess = async () => {
+  //   try {
+  //     await gameAreaController.makeMove(letterGuess as HangManLetters, '');
+  //     setLetterGuess('');
+  //   } catch (e) {
+  //     console.error('Unable to submit letter: Please try again.', e);
+  //     toast({
+  //       title: 'Error',
+  //       description: `Error: ${e}`,
+  //       status: 'error',
+  //     });
+  //   }
+  // };
+
+  // const handleWordGuess = async () => {
+  //   try {
+  //     // Check if it's our turn to make a move
+  //     if (gameAreaController.isOurTurn) {
+  //       // Ensure both letter and word guesses are not submitted at the same time
+  //       if (letterGuess !== '' && wordGuess !== '') {
+  //         console.error('You can only submit a letter or a word, not both.');
+  //         return;
+  //       }
+  //       await gameAreaController.makeMove(letterGuess as HangManLetters, wordGuess);
+  //       setWordGuess('');
+  //     }
+  //   } catch (e) {
+  //     console.error('Unable to submit your guess: Please try again', e);
+  //     toast({
+  //       title: 'Error',
+  //       description: `Error: ${e}`,
+  //       status: 'error',
+  //     });
+  //   }
+  // };
+
   return (
     <VStack spacing={4}>
       <Text fontSize='xl'>Word: {displayedWord}</Text>
 
       <Box>
+        <Heading as='h3'>Guess a Letter</Heading>
         <Input
           placeholder='Guess a letter'
           value={letterGuess}
+          maxLength={1}
           onChange={e => setLetterGuess(e.target.value)}
           isDisabled={wordGuess !== '' || !isOurTurn}
         />
@@ -77,8 +115,8 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
           Guess Letter
         </Button>
       </Box>
-
       <Box>
+        <Heading as='h3'>Guess the Word</Heading>
         <Input
           placeholder='Guess the word'
           value={wordGuess}

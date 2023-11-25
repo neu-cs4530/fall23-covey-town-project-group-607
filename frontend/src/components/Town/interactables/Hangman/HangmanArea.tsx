@@ -1,9 +1,10 @@
-import * as react from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import GameAreaInteractable from '../GameArea';
+
 import { InteractableID } from '../../../../types/CoveyTownSocket';
+
 import useTownController from '../../../../hooks/useTownController';
 import {
   Accordion,
@@ -25,6 +26,7 @@ import {
 } from '@chakra-ui/react';
 import HangmanBoard from './HangmanBoard';
 import HangmanComponent from './HangmanComponent';
+
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -78,17 +80,15 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   useEffect(() => {
     gameAreaController.addListener('gameUpdated', handleGameUpdate);
     gameAreaController.addListener('gameEnd', handleGameEnd);
-
     return () => {
-      gameAreaController.removeListener('gameUpdated', handleGameUpdate);
+      gameAreaController.removeListener('gameUpdated', updateGameState);
       gameAreaController.removeListener('gameEnd', handleGameEnd);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [townController, gameAreaController, toast]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  // const closeModal = () => {
+  //   setIsModalOpen(false);
+  // };
 
   let gameStatusText = <></>;
   if (gameStatus === 'IN_PROGRESS') {
@@ -100,6 +100,8 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     );
   } else {
     let joinGameButton = <></>;
+    // Check if the game is waiting to start and the current player is not in the game,
+    // or if the game is over
     if (
       (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
       gameAreaController.status === 'OVER'
