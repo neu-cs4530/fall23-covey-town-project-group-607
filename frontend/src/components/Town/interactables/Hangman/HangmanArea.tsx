@@ -24,6 +24,8 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
+import HangmanBoard from './HangmanBoard';
+import HangmanComponent from './HangmanComponent';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -32,60 +34,45 @@ export type HangmanBoardProps = {
 function HangmanArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<HangmanAreaController>(interactableID);
   const townController = useTownController();
-  const [mistakes, setMistakes] = useState<number>(gameAreaController.mistakeCount);
-  const [guessCount, setGuessCount] = useState<number>(gameAreaController.guessCount);
-  const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
+  const [mistakes, setMistakes] = useState(gameAreaController.mistakeCount);
+  const [gameStatus, setGameStatus] = useState(gameAreaController.status);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [joiningGame, setJoiningGame] = useState(false);
-  const [letterGuess, setLetterGuess] = useState('');
-  const [wordGuess, setWordGuess] = useState('');
+  const [player1, setPlayer1] = useState(gameAreaController.player1);
+  const [player2, setPlayer2] = useState(gameAreaController.player2);
+  const [player3, setPlayer3] = useState(gameAreaController.player3);
+  const [player4, setPlayer4] = useState(gameAreaController.player4);
+  const [whoseTurn, setWhoseTurn] = useState(gameAreaController.whoseTurn);
+  const [word, setWord] = useState(gameAreaController.word);
+  const [winner, setWinner] = useState(gameAreaController.winner);
+  const [stateCurrentGuess, setStateCurrentGuess] = useState(gameAreaController.stateCurrentGuess);
   const toast = react.useToast();
 
   // Handle all the game updates
   const handleGameUpdate = () => {
     setMistakes(gameAreaController.mistakeCount);
+    setGameStatus(gameAreaController.status);
+    setPlayer1(gameAreaController.player1);
+    setPlayer2(gameAreaController.player2);
+    setPlayer3(gameAreaController.player3);
+    setPlayer4(gameAreaController.player4);
+    setWhoseTurn(gameAreaController.whoseTurn);
+    setWord(gameAreaController.word);
+    setWinner(gameAreaController.winner);
+    setMistakes(gameAreaController.mistakeCount);
+    setStateCurrentGuess(gameAreaController.stateCurrentGuess);
   };
 
   const handleGameEnd = () => {
-    setMistakes(gameAreaController.mistakeCount);
-    setIsModalOpen(false);
-    const winner = gameAreaController.winner;
-    if (!winner) {
+    if (winner === undefined) {
       toast({
-        title: 'Game over',
-        description: 'Game ended in a tie',
-        status: 'info',
+        description: 'You lost',
       });
-    } else if (winner) {
+    }
+    if (winner?.includes(townController.ourPlayer)) {
       toast({
-        title: 'Game over',
         description: 'You won!',
-        status: 'success',
       });
-    } else {
-      toast({
-        title: 'Game over',
-        description: `You lost :(`,
-        status: 'error',
-      });
-    }
-  };
-
-  const handleLetterGuess = async () => {
-    try {
-      await gameAreaController.makeMove(letterGuess as HangManLetters, '');
-      setLetterGuess('');
-    } catch (e) {
-      console.error('Unable to submit letter:', e);
-    }
-  };
-
-  const handleWordGuess = async () => {
-    try {
-      await gameAreaController.makeMove(letterGuess as HangManLetters, wordGuess); //fix
-      setWordGuess('');
-    } catch (e) {
-      console.error('Unable to submit word:', e);
     }
   };
 
@@ -109,7 +96,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     gameStatusText = (
       <>
         {/* Game in progress, {guessCount} guesses in, {gameAreaController.maxMistakes - mistakes}{' '} */}
-        Game in progress, {guessCount} guesses in, {10 - mistakes} guesses left
+        Game Status: Game in progress
       </>
     );
   } else {
@@ -185,54 +172,38 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
           </Accordion>
           {gameStatusText}
           <List aria-label='list of players in the game'>
-            <ListItem>Players: {/* I dont know if we are adding players names */}</ListItem>
-            {gameAreaController.players.map((player, index) => {
-              return (
-                <ListItem key={player.id}>
-                  {index === 0 ? 'Player 1: ' : 'Player 2: '}
-                  {player.userName || '(No player yet!)'}
-                </ListItem>
-              );
-            })}
+            {player1?.userName ? (
+              <ListItem>Player1: {player1.userName}</ListItem>
+            ) : (
+              <ListItem>Player1: (No player yet!)</ListItem>
+            )}
+            {player2?.userName ? (
+              <ListItem>Player2: {player2.userName}</ListItem>
+            ) : (
+              <ListItem>Player2: (No player yet!)</ListItem>
+            )}
+            {player3?.userName ? (
+              <ListItem>Player3: {player3.userName}</ListItem>
+            ) : (
+              <ListItem>Player3: (No player yet!)</ListItem>
+            )}
+            {player4?.userName ? (
+              <ListItem>Player4: {player4.userName}</ListItem>
+            ) : (
+              <ListItem>Player4: (No player yet!)</ListItem>
+            )}
           </List>
-          {/* Will add Hangman leaderboard component here */}
-          <VStack spacing={4}>
-            <div>
-              <h3>{mistakes}</h3>
-            </div>
-            {/* render an h1 element withthe characters in the wordGuess string, separated by spaces, then join them back as a string. */}
-            <h1>Current Guess: {wordGuess.split('').join(' ')}</h1>
-            <h1>Mistakes: {mistakes}</h1>
-            <Box>
-              <input
-                placeholder='Guess a letter'
-                value={letterGuess}
-                onChange={e => setLetterGuess(e.target.value)}
-                disabled={wordGuess !== '' || gameStatus !== 'IN_PROGRESS'}
-              />
-              <Button
-                colorScheme='green'
-                onClick={handleLetterGuess}
-                disabled={letterGuess === '' || wordGuess !== '' || gameStatus !== 'IN_PROGRESS'}>
-                Guess Letter
-              </Button>
-            </Box>
-            <Box>
-              <input
-                placeholder='Guess the word'
-                value={wordGuess}
-                onChange={e => setWordGuess(e.target.value)}
-                disabled={letterGuess !== ''}
-              />
-              <Button
-                colorScheme='blue'
-                onClick={handleWordGuess}
-                disabled={wordGuess === '' || letterGuess !== ''}>
-                Guess Word
-              </Button>
-            </Box>
-          </VStack>
-          {/* <HangmanBoard gameAreaController={gameAreaController} /> */}
+          {whoseTurn?.userName ? (
+            <p>CurrentTurn: {whoseTurn.userName}</p>
+          ) : (
+            <p>CurrentTurn: No one</p>
+          )}
+          <p>Total Mistakes: {mistakes}</p>
+          <p>{word}</p>
+          <p>CurrentGuess:{stateCurrentGuess?.length}</p>
+          {/* <p>Winner:{winner}</p> */}
+          <HangmanComponent mistakeCount={mistakes} />
+          <HangmanBoard gameAreaController={gameAreaController} />
         </Container>
       </ModalContent>
     </Modal>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Input, VStack, Text } from '@chakra-ui/react';
+import { Box, Button, Input, VStack, Text, useToast } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
 import { HangManLetters } from '../../../../types/CoveyTownSocket';
 import Hangman from './HangmanComponent';
@@ -12,28 +12,39 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
   const [letterGuess, setLetterGuess] = useState('');
   const [wordGuess, setWordGuess] = useState('');
   const [displayedWord, setDisplayedWord] = useState('');
+  const [guessesSoFar, setGuessesSoFar] = useState('');
+  const [isOurTurn, setIsOurTurn] = useState(gameAreaController.isOurTurn);
+  const [currentGuess, setCurrentGuess] = useState(gameAreaController.currentGuess);
+  const [occupants, setOccupants] = useState(gameAreaController.occupants);
+  const [word, setWord] = useState(gameAreaController.word);
+  const toast = useToast();
 
   useEffect(() => {
-    // Check if the word is defined
-    if (gameAreaController.word) {
-      // Initialize the displayed word with blanks
-      setDisplayedWord('_'.repeat(gameAreaController.word.length));
-    } else {
-      // Handle the case where the word is not defined
-      setDisplayedWord('');
-    }
-  }, [gameAreaController.word]);
+    const handleBoardChanged = () => {
+      setCurrentGuess(gameAreaController.currentGuess);
+      setOccupants(gameAreaController.occupants);
+      setWord(gameAreaController.word);
+    };
 
-  useEffect(() => {
+    const handleTurnChanged = () => {
+      setIsOurTurn(gameAreaController.isOurTurn);
+    };
     // Update the displayed word when the current guess changes
-    const newDisplayedWord = gameAreaController.currentGuess.map(letter => letter || '_').join('');
+    const newDisplayedWord = currentGuess?.map(letter => letter || '_ ').join('');
     setDisplayedWord(newDisplayedWord);
-  }, [gameAreaController.currentGuess]);
+    gameAreaController.addListener('boardChanged', handleBoardChanged);
+    gameAreaController.addListener('turnChanged', handleTurnChanged);
+    return () => {
+      gameAreaController.removeListener('boardChanged', handleBoardChanged);
+      gameAreaController.removeListener('turnChanged', handleTurnChanged);
+    };
+  }, [HangmanBoard]);
 
   const handleLetterGuessSubmit = async () => {
     try {
       await gameAreaController.makeMove(letterGuess as HangManLetters);
       setLetterGuess('');
+      gameAreaController.updateFrom(gameAreaController.toInteractableAreaModel(), occupants);
     } catch (e) {
       console.error('Error making letter guess:', e);
     }
@@ -43,6 +54,7 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
     try {
       await gameAreaController.makeMove(wordGuess as HangManLetters);
       setWordGuess('');
+      gameAreaController.updateFrom(gameAreaController.toInteractableAreaModel(), occupants);
     } catch (e) {
       console.error('Error making word guess:', e);
     }
@@ -50,18 +62,14 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
 
   return (
     <VStack spacing={4}>
-      <Hangman mistakeCount={gameAreaController.mistakeCount} />
       <Text fontSize='xl'>Word: {displayedWord}</Text>
-      <Text fontSize='xl'>Mistakes: {gameAreaController.mistakeCount}</Text>
-      <Text fontSize='xl'>Current Guess: {gameAreaController.currentGuess.join(' ')}</Text>
-      <Text fontSize='xl'>Mistakes: {gameAreaController.mistakeCount}</Text>
 
       <Box>
         <Input
           placeholder='Guess a letter'
           value={letterGuess}
           onChange={e => setLetterGuess(e.target.value)}
-          isDisabled={wordGuess !== ''}
+          isDisabled={wordGuess !== '' || !isOurTurn}
         />
         <Button
           colorScheme='blue'
@@ -76,7 +84,7 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
           placeholder='Guess the word'
           value={wordGuess}
           onChange={e => setWordGuess(e.target.value)}
-          isDisabled={letterGuess !== ''}
+          isDisabled={letterGuess !== '' || !isOurTurn}
         />
         <Button
           colorScheme='blue'
