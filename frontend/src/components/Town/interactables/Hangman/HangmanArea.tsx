@@ -43,7 +43,6 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   const [player3, setPlayer3] = useState(gameAreaController.player3);
   const [player4, setPlayer4] = useState(gameAreaController.player4);
   const [whoseTurn, setWhoseTurn] = useState(gameAreaController.whoseTurn);
-  const [word, setWord] = useState(gameAreaController.word);
   const [stateCurrentGuess, setStateCurrentGuess] = useState(gameAreaController.stateCurrentGuess);
   const toast = react.useToast();
   const gameResults = gameAreaController.history;
@@ -57,7 +56,6 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
     setPlayer3(gameAreaController.player3);
     setPlayer4(gameAreaController.player4);
     setWhoseTurn(gameAreaController.whoseTurn);
-    setWord(gameAreaController.word);
     setMistakes(gameAreaController.mistakeCount);
     setStateCurrentGuess(gameAreaController.stateCurrentGuess);
   };
@@ -201,9 +199,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
             <p>CurrentTurn: No one</p>
           )}
           <p>Total Mistakes: {mistakes}</p>
-          <p>{word}</p>
           <p>CurrentGuess:{stateCurrentGuess?.length}</p>
-          {/* <p>Winner:{winner}</p> */}
           <HangmanComponent mistakeCount={mistakes} />
           <HangmanBoard gameAreaController={gameAreaController} />
         </Container>

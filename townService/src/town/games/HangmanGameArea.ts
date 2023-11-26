@@ -16,7 +16,7 @@ import GameArea from './GameArea';
 import HangmanGame from './HangmanGame';
 
 /**
- * A TicTacToeGameArea is a GameArea that hosts a TicTacToeGame.
+ * A HangmanGameArea is a GameArea that hosts a HangmanGame.
  * @see HangmanGameArea
  * @see GameArea
  */
