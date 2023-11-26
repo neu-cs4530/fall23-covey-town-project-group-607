@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Input, VStack, Text } from '@chakra-ui/react';
 import HangmanAreaController from '../../../../classes/interactable/HangmanAreaController';
-import { HangManLetters } from '../../../../types/CoveyTownSocket';
+import { HangManLetters, HangManMove } from '../../../../types/CoveyTownSocket';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -11,7 +11,7 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
   const [letterGuess, setLetterGuess] = useState('');
   const [wordGuess, setWordGuess] = useState('');
   const [displayedWord, setDisplayedWord] = useState('');
-  // const [guessesSoFar, setGuessesSoFar] = useState('');
+  const [mistakes, setMistakes] = useState<ReadonlyArray<HangManMove>>([]);
   const [isOurTurn, setIsOurTurn] = useState(gameAreaController.isOurTurn);
   const [occupants] = useState(gameAreaController.occupants);
   // const toast = useToast();
@@ -23,6 +23,8 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
         .map(letter => letter || '_ ')
         .join('');
       setDisplayedWord(newDisplayedWord);
+      setMistakes(gameAreaController.mistakes);
+      console.log('Mistakes:', mistakes);
     };
 
     const handleTurnChanged = () => {
@@ -39,7 +41,11 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
       gameAreaController.removeListener('boardChanged', handleBoardChanged);
       gameAreaController.removeListener('turnChanged', handleTurnChanged);
     };
-  }, [gameAreaController]);
+  }, [gameAreaController, mistakes]);
+
+  const guessedLetters = Array.from(mistakes)
+    .map(move => move.letterGuess)
+    .filter(Boolean);
 
   const handleLetterGuessSubmit = async () => {
     try {
@@ -64,6 +70,9 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
   return (
     <VStack spacing={4}>
       <Text fontSize='xl'>Word: {displayedWord}</Text>
+
+      {/* Display guessed letters */}
+      <Text fontSize='md'>Guessed Letters: {guessedLetters.join(', ')}</Text>
 
       <Box>
         <Input

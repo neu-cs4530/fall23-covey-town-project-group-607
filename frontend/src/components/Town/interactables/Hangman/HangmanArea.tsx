@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import HangmanBoard from './HangmanBoard';
 import HangmanComponent from './HangmanComponent';
+import HangmanLeaderboard from '../HangmanLeaderboard';
 
 export type HangmanBoardProps = {
   gameAreaController: HangmanAreaController;
@@ -45,6 +46,7 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
   const [word, setWord] = useState(gameAreaController.word);
   const [stateCurrentGuess, setStateCurrentGuess] = useState(gameAreaController.stateCurrentGuess);
   const toast = react.useToast();
+  const gameResults = gameAreaController.history;
 
   // Handle all the game updates
   const handleGameUpdate = () => {
@@ -148,7 +150,9 @@ function HangmanArea({ interactableID }: { interactableID: InteractableID }): JS
                   </Box>
                 </AccordionButton>
               </Heading>
-              <AccordionPanel>{/* Will add Hangman leaderboard component here */}</AccordionPanel>
+              <AccordionPanel>
+                <HangmanLeaderboard results={gameResults} />
+              </AccordionPanel>
             </AccordionItem>
             <AccordionItem>
               <Heading as='h3'>

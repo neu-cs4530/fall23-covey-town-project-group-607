@@ -146,6 +146,10 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Gets an array of the letters that are guessed in the hangman game
    */
+  get mistakes(): ReadonlyArray<HangManMove> {
+    return this._model.game?.state.mistakes || [];
+  }
+
   get word() {
     return this._model.game?.state.word;
   }
@@ -250,10 +254,15 @@ export default class HangmanAreaController extends GameAreaController<
   protected _updateFrom(newModel: GameArea<HangManGameState>): void {
     //Initialize the past states fo the board
     const currentGuess = this.currentGuess;
+    const previousMistakes = this.mistakes;
     const previousTurn = this.isOurTurn;
     super._updateFrom(newModel);
     //TODO
     if (this._checkArrays(currentGuess, this.currentGuess)) {
+      this.emit('boardChanged', this.currentGuess);
+    }
+    // Check if the mistakes have changed
+    if (this._checkMistakes(previousMistakes, this.mistakes)) {
       this.emit('boardChanged', this.currentGuess);
     }
     if (this.isOurTurn !== previousTurn) {
@@ -274,6 +283,13 @@ export default class HangmanAreaController extends GameAreaController<
       }
     }
     return false;
+  }
+
+  private _checkMistakes(
+    previousMistakes: ReadonlyArray<HangManMove>,
+    currentMistakes: ReadonlyArray<HangManMove>,
+  ): boolean {
+    return previousMistakes.length !== currentMistakes.length;
   }
 
   /**
