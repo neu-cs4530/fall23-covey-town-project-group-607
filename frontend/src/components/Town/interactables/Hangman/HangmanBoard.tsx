@@ -24,7 +24,6 @@ export default function HangmanBoard({ gameAreaController }: HangmanBoardProps):
         .join('');
       setDisplayedWord(newDisplayedWord);
       setMistakes(gameAreaController.mistakes);
-      console.log('Mistakes:', mistakes);
     };
 
     const handleTurnChanged = () => {

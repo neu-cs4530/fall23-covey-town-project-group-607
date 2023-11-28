@@ -56,14 +56,14 @@ export default class HangmanAreaController extends GameAreaController<
   }
 
   /**
-   * Gets the field CurrentGuess from the model
+   * Gets the current guess in the game
    */
   get stateCurrentGuess() {
     return this._model.game?.state.currentGuess;
   }
 
   /**
-   * CurrentGuess of the controller
+   * Initiating currentGuess for the controller and returning it
    */
   get currentGuess() {
     const theWord = this._model.game?.state.word;
@@ -101,47 +101,6 @@ export default class HangmanAreaController extends GameAreaController<
     }
     return currentGuessArray;
   }
-  /**
-   * Gets an array of the letters that are guessed correctly in the hangman game
-   */
-  // get currentGuess() {
-  //   const theWord = this.word;
-  //   //Intializes the currentGuess array
-  //   const currentGuessArray = this._model.game?.state.currentGuess;
-  //   if (theWord && currentGuessArray) {
-  //     for (let i = 0; i < theWord?.length; i++) {
-  //       currentGuessArray[i] = '';
-  //     }
-  //   } else {
-  //     return [];
-  //   }
-
-  //   // If the guessword === array then we fill all the letters
-  //   // If the letterword === some of the array we fill the letters
-  //   //Adds the letters to the array if guessed
-  //   if (this._model.game?.state.guesses && currentGuessArray) {
-  //     for (const guess of this._model.game.state.guesses) {
-  //       if (guess.letterGuess) {
-  //         if (theWord?.includes(guess.letterGuess)) {
-  //           for (let k = 0; k < theWord.length; k++) {
-  //             if (theWord[k] === guess.letterGuess) {
-  //               currentGuessArray[k] = guess.letterGuess;
-  //             }
-  //           }
-  //         }
-  //       }
-  //       if (guess.wordGuess) {
-  //         if (guess.wordGuess === theWord) {
-  //           for (let j = 0; j < theWord.length; j++) {
-  //             currentGuessArray[j] = theWord[j];
-  //           }
-  //         }
-  //       }
-  //     }
-  //     return currentGuessArray;
-  //   }
-  //   return currentGuessArray;
-  // }
 
   /**
    * Gets an array of the letters that are guessed in the hangman game
@@ -251,6 +210,18 @@ export default class HangmanAreaController extends GameAreaController<
     return undefined;
   }
 
+  /**
+   * Updates the internal state of this HangmanAreaController to match the new model.
+   *
+   * Calls super._updateFrom, which updates the occupants of this game area and
+   * other common properties (including this._model).
+   *
+   * If the currentGuess array board has changed, emits a 'boardChanged' event with the new currentGuess. If the currentGuess has not changed,
+   *  does not emit the event.
+   *
+   * If the turn has changed, emits a 'turnChanged' event with true if it is our turn, and false otherwise.
+   * If the turn has not changed, does not emit the event.
+   */
   protected _updateFrom(newModel: GameArea<HangManGameState>): void {
     //Initialize the past states fo the board
     const currentGuess = this.currentGuess;
