@@ -1,6 +1,6 @@
 {
     "name": "covey-town",
-    "version": "1.0.0",
+    "version": "^4.9.5",
     "description": "Development setup",
     "main": "index.js",
     "scripts": {

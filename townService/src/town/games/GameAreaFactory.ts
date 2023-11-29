@@ -2,6 +2,7 @@ import { ITiledMapObject } from '@jonbell/tiled-map-type-guard';
 import { BoundingBox, TownEmitter } from '../../types/CoveyTownSocket';
 import InteractableArea from '../InteractableArea';
 import TicTacToeGameArea from './TicTacToeGameArea';
+import HangmanGameArea from './HangmanGameArea';
 
 /**
  * Creates a new GameArea from a map object
@@ -20,8 +21,14 @@ export default function GameAreaFactory(
   }
   const rect: BoundingBox = { x: mapObject.x, y: mapObject.y, width, height };
   const gameType = mapObject.properties?.find(prop => prop.name === 'type')?.value;
+
   if (gameType === 'TicTacToe') {
     return new TicTacToeGameArea(name, rect, broadcastEmitter);
   }
+
+  if (gameType === 'Hangman') {
+    return new HangmanGameArea(name, rect, broadcastEmitter);
+  }
+
   throw new Error(`Unknown game area type ${mapObject.class}`);
 }

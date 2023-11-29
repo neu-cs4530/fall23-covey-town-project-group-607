@@ -31,10 +31,9 @@ export default class HangmanGame extends Game<HangManGameState, HangManMove> {
     }
   }
 
-  // Generates random word
   private _generateRandomWord(): string {
     const words = readFileSync('./src/town/games/words.txt', { encoding: 'utf8', flag: 'r' });
-    const wordsList = words.split('\n');
+    const wordsList = words.split('\n').map(word => word.trim()); // Trim each word
     const randomNumber = Math.floor(Math.random() * wordsList.length);
     return wordsList[randomNumber];
   }

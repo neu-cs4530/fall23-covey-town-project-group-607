@@ -51,23 +51,22 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Gets the total amount of guesses in the game
    */
-  get guess() {
-    return this._model.game?.state.guesses;
-  }
-
-  /**
-   * Gets the total amount of guesses in the game
-   */
   get guessCount() {
     return this._model.game?.state.guesses.length || 0;
   }
 
   /**
-   * Gets an array of the letters that are guessed in the hangman game
+   * Gets the current guess in the game
+   */
+  get stateCurrentGuess() {
+    return this._model.game?.state.currentGuess;
+  }
+
+  /**
+   * Initiating currentGuess for the controller and returning it
    */
   get currentGuess() {
     const theWord = this._model.game?.state.word;
-
     //Intializes the currentGuess array
     const currentGuessArray = [];
     if (theWord) {
@@ -106,6 +105,10 @@ export default class HangmanAreaController extends GameAreaController<
   /**
    * Gets an array of the letters that are guessed in the hangman game
    */
+  get mistakes(): ReadonlyArray<HangManMove> {
+    return this._model.game?.state.mistakes || [];
+  }
+
   get word() {
     return this._model.game?.state.word;
   }
@@ -207,13 +210,30 @@ export default class HangmanAreaController extends GameAreaController<
     return undefined;
   }
 
+  /**
+   * Updates the internal state of this HangmanAreaController to match the new model.
+   *
+   * Calls super._updateFrom, which updates the occupants of this game area and
+   * other common properties (including this._model).
+   *
+   * If the currentGuess array board has changed, emits a 'boardChanged' event with the new currentGuess. If the currentGuess has not changed,
+   *  does not emit the event.
+   *
+   * If the turn has changed, emits a 'turnChanged' event with true if it is our turn, and false otherwise.
+   * If the turn has not changed, does not emit the event.
+   */
   protected _updateFrom(newModel: GameArea<HangManGameState>): void {
     //Initialize the past states fo the board
     const currentGuess = this.currentGuess;
+    const previousMistakes = this.mistakes;
     const previousTurn = this.isOurTurn;
     super._updateFrom(newModel);
     //TODO
     if (this._checkArrays(currentGuess, this.currentGuess)) {
+      this.emit('boardChanged', this.currentGuess);
+    }
+    // Check if the mistakes have changed
+    if (this._checkMistakes(previousMistakes, this.mistakes)) {
       this.emit('boardChanged', this.currentGuess);
     }
     if (this.isOurTurn !== previousTurn) {
@@ -234,6 +254,13 @@ export default class HangmanAreaController extends GameAreaController<
       }
     }
     return false;
+  }
+
+  private _checkMistakes(
+    previousMistakes: ReadonlyArray<HangManMove>,
+    currentMistakes: ReadonlyArray<HangManMove>,
+  ): boolean {
+    return previousMistakes.length !== currentMistakes.length;
   }
 
   /**
