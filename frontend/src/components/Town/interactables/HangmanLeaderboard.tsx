@@ -7,14 +7,14 @@ export default function HangmanLeaderboard({ results }: { results: GameResult[] 
 
   results.forEach(result => {
     const players = Object.keys(result.scores);
-    const winner = result.scores[players[0]] > result.scores[players[1]] ? players[0] : players[1];
 
-    if (winner) {
-      winsByPlayer[winner] = {
-        player: winner,
-        wins: (winsByPlayer[winner]?.wins || 0) + 1,
-      };
-    }
+    players.forEach(player => {
+      // Increment win count for each player
+      if (!winsByPlayer[player]) {
+        winsByPlayer[player] = { player: player, wins: 0 };
+      }
+      winsByPlayer[player].wins += 1;
+    });
   });
 
   const rows = Object.values(winsByPlayer);
