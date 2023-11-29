@@ -34,7 +34,6 @@ export type HangmanBoardProps = {
 function HangmanArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
   const gameAreaController = useInteractableAreaController<HangmanAreaController>(interactableID);
   const townController = useTownController();
-  const toast = useToast();
   const [mistakes, setMistakes] = useState(gameAreaController.mistakeCount);
   const [gameStatus, setGameStatus] = useState(gameAreaController.status);
   const [isModalOpen, setIsModalOpen] = useState(true);
